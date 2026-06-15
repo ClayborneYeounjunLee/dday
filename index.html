@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f4f4f1">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="디데이">
+<meta name="description" content="공익 복무 · 조기전역 · 병가/연가/특별휴가 계산과 캘린더 — 디데이">
+<script>
+/* 깜빡임 없이 테마 먼저 적용 (모아 앱들과 동일 패턴) */
+(function(){
+  try{
+    var t = localStorage.getItem("hub-theme")
+      || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    document.documentElement.dataset.theme = t;
+  }catch(e){}
+})();
+</script>
+<title>디데이 · D-Day — 공익 복무 계산기</title>
+<link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='16' fill='%232563eb'/><text x='32' y='44' font-size='34' font-family='sans-serif' font-weight='800' fill='white' text-anchor='middle'>D</text></svg>">
+<style>
+/* ════════ 디자인 토큰 — moa/haru/kanade/baybayin 공통 시스템 ════════ */
+:root{
+  --bg:#f4f4f1; --card:#ffffff; --ink:#191b22; --sub:#8a8d99;
+  --line:#e8e8ed; --accent:#2563eb; --accent2:#4f8cff; --accent-soft:#e8f0ff;
+  --green:#2f9e63; --red:#d64545; --amber:#e6920b; --blue:#2563eb; --purple:#7c5cf0;
+  --seg-bg:#e9e9ec; --switch-off:#d8d8dd; --input-bg:#fafafc; --track:#e7e7ec;
+  --green-soft:#e7f6ee; --red-soft:#fdeaea; --amber-soft:#fdf2dd; --blue-soft:#e8f0ff; --purple-soft:#efeaff;
+  --hint-fg:#bfc1cc;
+  --shadow:0 1px 2px rgba(16,18,28,.04), 0 10px 28px rgba(16,18,28,.07);
+  color-scheme:light;
+}
+html[data-theme="dark"]{
+  --bg:#111219; --card:#1b1d27; --ink:#e9eaf0; --sub:#9094a6;
+  --line:#2b2e3c; --accent:#5b8def; --accent2:#84acff; --accent-soft:#1d2740;
+  --green:#41b97c; --red:#ef6e6e; --amber:#f3b13e; --blue:#5b8def; --purple:#a48bff;
+  --seg-bg:#252734; --switch-off:#3c3f4e; --input-bg:#14151d; --track:#2b2e3c;
+  --green-soft:#1d3a2a; --red-soft:#41232a; --amber-soft:#3a2f17; --blue-soft:#1d2740; --purple-soft:#2a2350;
+  --hint-fg:#585d72;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 28px rgba(0,0,0,.45);
+  color-scheme:dark;
+}
+*{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html,body{ height:100%; }
+body{
+  margin:0;
+  font-family:"Pretendard","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;
+  background:var(--bg); color:var(--ink);
+  letter-spacing:-0.01em; -webkit-text-size-adjust:100%;
+  overscroll-behavior-y:contain;
+}
+button{ font-family:inherit; color:inherit; touch-action:manipulation; -webkit-user-select:none; user-select:none; }
+.hidden{ display:none !important; }
+.wrap{
+  max-width:760px; margin:0 auto;
+  padding:max(22px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right))
+          calc(48px + env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+}
+.appbar{ display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; }
+.appbar .logo{ display:flex; align-items:center; gap:10px; font-size:19px; font-weight:800; letter-spacing:-0.02em; }
+.logo-mark{ display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px; border-radius:11px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2)); color:#fff; font-size:18px; font-weight:800; box-shadow:0 4px 12px rgba(37,99,235,.32); flex:0 0 auto; }
+.logo small{ font-weight:600; color:var(--sub); font-size:12px; margin-left:1px; }
+.appbar-actions{ display:flex; gap:8px; }
+.icon-btn{ background:var(--card); color:var(--sub); cursor:pointer; width:42px; height:42px; border-radius:12px; font-size:17px; border:1px solid var(--line); flex:0 0 auto; }
+.icon-btn:active{ transform:scale(.95); }
+
+.hero{ margin:16px 2px 16px; }
+.hero-greet{ font-size:23px; font-weight:800; letter-spacing:-0.03em; line-height:1.3; }
+.hero-sub{ color:var(--sub); font-size:13.5px; margin-top:6px; line-height:1.55; }
+
+.panel{ background:var(--card); border:1px solid var(--line); border-radius:20px; padding:17px 16px; box-shadow:var(--shadow); margin-bottom:14px; }
+.panel-h{ display:flex; align-items:center; gap:8px; font-size:14px; font-weight:800; margin:0 0 13px; }
+.panel-h .ic{ font-size:16px; }
+.panel-h .tail{ margin-left:auto; font-size:11.5px; font-weight:700; color:var(--sub); }
+
+.stat-grid{ display:grid; grid-template-columns:1fr 1fr; gap:11px; margin-bottom:14px; }
+.stat{ background:var(--card); border:1px solid var(--line); border-radius:18px; padding:15px; box-shadow:var(--shadow); position:relative; overflow:hidden; }
+.stat.hl{ background:linear-gradient(135deg,var(--accent),var(--accent2)); border:none; color:#fff; }
+.stat .s-lbl{ font-size:11.5px; font-weight:800; color:var(--sub); }
+.stat.hl .s-lbl{ color:rgba(255,255,255,.85); }
+.stat .s-big{ font-size:27px; font-weight:800; letter-spacing:-0.03em; margin-top:4px; line-height:1.1; }
+.stat .s-sub{ font-size:11.5px; color:var(--sub); margin-top:5px; line-height:1.4; }
+.stat.hl .s-sub{ color:rgba(255,255,255,.9); }
+.prog{ height:8px; border-radius:99px; background:var(--track); overflow:hidden; margin-top:9px; }
+.prog > i{ display:block; height:100%; border-radius:99px; background:linear-gradient(90deg,var(--accent),var(--accent2)); }
+
+.kv{ display:flex; align-items:baseline; justify-content:space-between; gap:12px; padding:9px 0; border-top:1px solid var(--line); }
+.kv:first-of-type{ border-top:none; }
+.kv .k{ font-size:13px; color:var(--sub); font-weight:600; flex:0 0 auto; }
+.kv .v{ font-size:14px; font-weight:800; text-align:right; }
+.kv .v small{ font-weight:600; color:var(--sub); font-size:11.5px; }
+.big-date{ font-size:20px; font-weight:800; letter-spacing:-0.02em; }
+.note{ font-size:12px; color:var(--sub); line-height:1.6; margin-top:10px; background:var(--input-bg); border:1px solid var(--line); border-radius:12px; padding:10px 12px; }
+.note b{ color:var(--ink); }
+.note.warn{ background:var(--amber-soft); border-color:color-mix(in srgb,var(--amber) 35%,var(--line)); }
+.note.warn b{ color:var(--amber); }
+
+/* 잔여 미니카드 */
+.bal-grid{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:9px; margin-bottom:4px; }
+.bal{ border:1px solid var(--line); border-radius:14px; padding:11px 12px; background:var(--input-bg); }
+.bal .b-lbl{ font-size:11px; font-weight:800; color:var(--sub); }
+.bal .b-v{ font-size:17px; font-weight:800; margin-top:3px; letter-spacing:-0.02em; }
+.bal .b-sub{ font-size:10.5px; color:var(--sub); margin-top:2px; }
+.bal.sick{ border-color:color-mix(in srgb,var(--red) 30%,var(--line)); }
+.bal.annual{ border-color:color-mix(in srgb,var(--accent) 30%,var(--line)); }
+.bal.special{ border-color:color-mix(in srgb,var(--purple) 30%,var(--line)); }
+
+.sc-table{ width:100%; border-collapse:collapse; font-size:13.5px; }
+.sc-table th, .sc-table td{ padding:10px 8px; text-align:left; border-top:1px solid var(--line); }
+.sc-table th{ font-size:11px; color:var(--sub); font-weight:800; border-top:none; }
+.sc-table td.num{ font-weight:800; }
+.sc-table tr.on td{ background:var(--amber-soft); }
+.sc-table tbody tr{ cursor:pointer; }
+.sc-table .rt{ display:inline-flex; align-items:center; gap:6px; font-weight:800; }
+.dot{ width:9px;height:9px;border-radius:50%; flex:0 0 auto; }
+
+.chip-row{ display:flex; flex-wrap:wrap; gap:7px; }
+.chip{ border:1.5px solid var(--line); background:var(--card); border-radius:999px; padding:7px 13px; font-size:12.5px; font-weight:700; color:var(--sub); cursor:pointer; transition:all .12s; }
+.chip.on{ border-color:var(--accent); color:var(--accent); background:var(--accent-soft); }
+
+/* 복무현황 그리드 */
+.svc-grid{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:4px; }
+.svc-cell{ border:1px solid var(--line); border-radius:11px; padding:9px 11px; background:var(--input-bg); }
+.svc-cell .c-k{ font-size:11px; color:var(--sub); font-weight:700; }
+.svc-cell .c-v{ font-size:13.5px; font-weight:800; margin-top:2px; }
+.svc-cell .c-v small{ font-weight:600; color:var(--sub); font-size:11px; }
+
+/* 캘린더 */
+.cal-top{ display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+.cal-title{ font-size:16px; font-weight:800; }
+.cal-nav{ display:flex; gap:6px; margin-left:auto; }
+.cal-nav button, .cal-today{ border:1px solid var(--line); background:var(--card); color:var(--ink); width:34px; height:34px; border-radius:10px; font-size:15px; cursor:pointer; }
+.cal-today{ width:auto; padding:0 12px; font-size:12.5px; font-weight:700; }
+.cal-grid{ display:grid; grid-template-columns:repeat(7,1fr); gap:5px; }
+.cal-dow{ text-align:center; font-size:11px; font-weight:800; color:var(--sub); padding:2px 0 6px; }
+.cal-dow.sun{ color:var(--red); } .cal-dow.sat{ color:var(--blue); }
+.cal-cell{ position:relative; min-height:60px; border:1px solid var(--line); border-radius:12px; background:var(--card); padding:5px 5px 4px; cursor:pointer; overflow:hidden; display:flex; flex-direction:column; gap:2px; transition:border-color .12s, background .12s; }
+.cal-cell.empty{ border:none; background:transparent; cursor:default; }
+.cal-cell:not(.empty):hover{ border-color:var(--accent); }
+.cal-cell.off{ background:var(--input-bg); }
+.cal-cell.leave{ background:var(--green-soft); border-color:color-mix(in srgb,var(--green) 35%,var(--line)); }
+.cal-cell.sc{ box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--amber) 55%,transparent); }
+.cal-cell.today{ border-color:var(--accent); box-shadow:0 0 0 2px var(--accent-soft); }
+.cal-d{ font-size:12.5px; font-weight:800; line-height:1; }
+.cal-cell.sun .cal-d{ color:var(--red); } .cal-cell.sat .cal-d{ color:var(--blue); }
+.cal-hol{ font-size:9px; font-weight:700; color:var(--red); line-height:1.15; word-break:keep-all; }
+.cal-tag{ font-size:9px; font-weight:800; line-height:1.2; border-radius:5px; padding:1px 4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.cal-tag.sick{ background:var(--red-soft); color:var(--red); }
+.cal-tag.annual{ background:var(--accent-soft); color:var(--accent); }
+.cal-tag.special{ background:var(--purple-soft); color:var(--purple); }
+.cal-tag.lv{ background:var(--green-soft); color:var(--green); }
+.cal-tag.scn{ background:var(--amber-soft); color:var(--amber); }
+.cal-tag.dep{ background:var(--accent); color:#fff; }
+
+.legend{ display:flex; flex-wrap:wrap; gap:11px 16px; margin-top:13px; font-size:11.5px; color:var(--sub); }
+.legend span{ display:inline-flex; align-items:center; gap:6px; }
+.legend i{ width:13px; height:13px; border-radius:4px; display:inline-block; }
+
+.log-list{ display:flex; flex-direction:column; gap:8px; }
+.log-item{ display:flex; align-items:center; gap:11px; padding:11px 12px; border:1px solid var(--line); border-radius:13px; background:var(--input-bg); }
+.log-item .li-date{ font-size:12.5px; font-weight:800; flex:0 0 auto; width:78px; }
+.log-item .li-type{ font-size:11px; font-weight:800; border-radius:999px; padding:3px 9px; }
+.li-type.sick{ background:var(--red-soft); color:var(--red); }
+.li-type.annual{ background:var(--accent-soft); color:var(--accent); }
+.li-type.special{ background:var(--purple-soft); color:var(--purple); }
+.log-item .li-amt{ font-size:13px; font-weight:700; margin-left:auto; }
+.log-item .li-del{ border:none; background:transparent; color:var(--sub); font-size:17px; cursor:pointer; padding:2px 4px; flex:0 0 auto; }
+.log-item .li-del:hover{ color:var(--red); }
+.log-empty{ text-align:center; color:var(--sub); font-size:13px; padding:18px 8px; }
+
+.sheet-wrap{ position:fixed; inset:0; z-index:60; display:flex; align-items:flex-end; justify-content:center; }
+.sheet-backdrop{ position:absolute; inset:0; background:rgba(10,12,20,.45); animation:fade .2s ease; }
+.sheet{ position:relative; width:100%; max-width:520px; background:var(--card); border-radius:24px 24px 0 0; max-height:92vh; overflow-y:auto;
+  padding:10px 18px calc(24px + env(safe-area-inset-bottom)); box-shadow:0 -10px 40px rgba(0,0,0,.25); animation:slideup .28s cubic-bezier(.2,.8,.2,1); }
+.sheet-grip{ width:42px; height:5px; border-radius:99px; background:var(--line); margin:4px auto 14px; }
+.sheet h3{ font-size:18px; font-weight:800; margin:2px 2px 4px; }
+.sheet .sub{ font-size:12.5px; color:var(--sub); margin:0 2px 16px; line-height:1.6; }
+@keyframes slideup{ from{ transform:translateY(100%); } to{ transform:none; } }
+@keyframes fade{ from{ opacity:0; } to{ opacity:1; } }
+.field{ margin-bottom:13px; }
+.field label{ display:block; font-size:12px; font-weight:800; color:var(--sub); margin:0 2px 7px; }
+.input{ width:100%; border:1.5px solid var(--line); background:var(--input-bg); color:var(--ink); border-radius:13px; padding:12px 14px; font-size:15px; font-family:inherit; -webkit-appearance:none; appearance:none; }
+.input:focus{ outline:none; border-color:var(--accent); }
+.row2{ display:flex; gap:10px; } .row2 .field{ flex:1; }
+.seg{ display:flex; gap:6px; background:var(--seg-bg); border-radius:13px; padding:5px; }
+.seg button{ flex:1; border:none; background:transparent; color:var(--sub); font-weight:800; font-size:13px; padding:10px 4px; border-radius:9px; cursor:pointer; }
+.seg button.on{ background:var(--card); color:var(--ink); box-shadow:0 1px 4px rgba(0,0,0,.12); }
+.switch-row{ display:flex; align-items:center; justify-content:space-between; padding:11px 2px; }
+.switch-row .sw-lbl{ font-size:13.5px; font-weight:700; }
+.switch{ width:48px; height:28px; border-radius:99px; background:var(--switch-off); position:relative; cursor:pointer; flex:0 0 auto; transition:background .15s; border:none; }
+.switch.on{ background:var(--accent); }
+.switch::after{ content:""; position:absolute; top:3px; left:3px; width:22px; height:22px; border-radius:50%; background:#fff; transition:left .15s; }
+.switch.on::after{ left:23px; }
+.btn{ display:block; width:100%; border:none; border-radius:14px; cursor:pointer; font-size:16px; font-weight:700; padding:15px; transition:transform .08s, opacity .15s; }
+.btn:active{ transform:scale(.98); }
+.btn-accent{ background:linear-gradient(135deg,var(--accent),var(--accent2)); color:#fff; box-shadow:0 6px 18px rgba(37,99,235,.3); }
+.btn-ghost{ background:var(--card); color:var(--ink); border:1.5px solid var(--line); margin-top:10px; }
+.btn-danger{ background:var(--red-soft); color:var(--red); margin-top:10px; }
+.day-logs{ margin-top:6px; }
+.day-logs .dl-item{ display:flex; align-items:center; gap:10px; padding:9px 11px; border:1px solid var(--line); border-radius:11px; margin-bottom:7px; font-size:13px; }
+.day-logs .dl-del{ border:none; background:transparent; color:var(--sub); font-size:16px; cursor:pointer; margin-left:auto; }
+.toast{ position:fixed; left:50%; bottom:calc(28px + env(safe-area-inset-bottom)); transform:translateX(-50%); background:var(--ink); color:var(--bg); font-size:13.5px; font-weight:700; padding:12px 20px; border-radius:999px; z-index:90; box-shadow:0 8px 24px rgba(0,0,0,.3); opacity:0; pointer-events:none; transition:opacity .2s, transform .2s; }
+.toast.show{ opacity:1; transform:translateX(-50%) translateY(-4px); }
+footer{ text-align:center; color:var(--sub); font-size:11.5px; margin-top:26px; line-height:1.7; }
+footer a{ color:var(--accent); text-decoration:none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="appbar">
+    <div class="logo"><span class="logo-mark">D</span>디데이<small>D-Day</small></div>
+    <div class="appbar-actions">
+      <button class="icon-btn" id="btn-settings" title="설정">⚙️</button>
+      <button class="icon-btn theme-btn" title="테마 전환">🌙</button>
+    </div>
+  </div>
+
+  <div class="hero">
+    <div class="hero-greet" id="hero-greet">호주 출국까지</div>
+    <div class="hero-sub" id="hero-sub">출국 전에 병가를 다 쓰고, 출국~소집해제는 연가·특별휴가로 채우는 계획이에요.</div>
+  </div>
+
+  <div class="stat-grid" id="stat-grid"></div>
+
+  <!-- 조기전역(고정) -->
+  <div class="panel">
+    <div class="panel-h"><span class="ic">✈️</span>조기전역 — 출국일 고정<span class="tail" id="early-tail"></span></div>
+    <div id="early-body"></div>
+  </div>
+
+  <!-- 병가 -->
+  <div class="panel">
+    <div class="panel-h"><span class="ic">🩹</span>병가 — 출국 전에 소진<span class="tail">행을 누르면 캘린더에 표시</span></div>
+    <div id="sick-body"></div>
+  </div>
+
+  <!-- 연가·특별휴가 -->
+  <div class="panel">
+    <div class="panel-h"><span class="ic">🌴</span>연가 · 특별휴가 — 출국 후 채우기</div>
+    <div id="cover-body"></div>
+  </div>
+
+  <!-- 복무 현황 (근무상황관리 기준) -->
+  <div class="panel">
+    <div class="panel-h"><span class="ic">📋</span>복무 현황<span class="tail">근무상황관리 기준</span></div>
+    <div id="svc-body"></div>
+  </div>
+
+  <!-- 캘린더 -->
+  <div class="panel">
+    <div class="cal-top">
+      <div class="cal-title" id="cal-title">2026.06</div>
+      <div class="cal-nav">
+        <button class="cal-today" id="cal-today">오늘</button>
+        <button id="cal-prev">‹</button>
+        <button id="cal-next">›</button>
+      </div>
+    </div>
+    <div class="chip-row" id="cal-filter"></div>
+    <div class="cal-grid" id="cal-grid" style="margin-top:12px;"></div>
+    <div class="legend">
+      <span><i style="background:var(--green-soft);border:1px solid var(--green)"></i>조기전역 휴가(연가·특별, 고정)</span>
+      <span><i style="background:var(--amber-soft);box-shadow:inset 0 0 0 2px var(--amber)"></i>병가 조퇴구간</span>
+      <span><i style="background:var(--red-soft)"></i>병가 기록</span>
+      <span><i style="background:var(--accent-soft)"></i>연가</span>
+      <span><i style="background:var(--purple-soft)"></i>특별휴가</span>
+      <span><i style="background:var(--input-bg);border:1px solid var(--line)"></i>주말·공휴일</span>
+    </div>
+  </div>
+
+  <!-- 사용 기록 -->
+  <div class="panel">
+    <div class="panel-h"><span class="ic">📝</span>사용 기록<span class="tail" id="log-tail"></span></div>
+    <div class="log-list" id="log-list"></div>
+    <button class="btn btn-ghost" id="btn-addlog" style="margin-top:12px;">＋ 사용 기록 추가</button>
+  </div>
+
+  <footer>
+    디데이 · D-Day — <a href="../index.html">모아로 돌아가기</a><br>
+    모든 데이터는 이 브라우저에만 저장돼요(localStorage). 날짜·잔여·가정은 ⚙️에서 바꿀 수 있어요.
+  </footer>
+</div>
+
+<!-- ═════════ 설정 시트 ═════════ -->
+<div class="sheet-wrap hidden" id="set-wrap">
+  <div class="sheet-backdrop" data-close="set"></div>
+  <div class="sheet">
+    <div class="sheet-grip"></div>
+    <h3>설정</h3>
+    <p class="sub">날짜·잔여 휴가·가정을 입력하세요. 바꾸면 모든 계산과 캘린더가 즉시 갱신돼요.</p>
+    <div class="row2">
+      <div class="field"><label>소집일자(복무 시작)</label><input class="input" id="s-start" type="date"></div>
+      <div class="field"><label>소집해제 예정일</label><input class="input" id="s-end" type="date"></div>
+    </div>
+    <div class="field"><label>출국일 ✈️ (조기전역 고정 기준)</label><input class="input" id="s-departure" type="date"></div>
+    <div class="row2">
+      <div class="field"><label>하루 복무시간(시간)</label><input class="input" id="s-hpd" type="number" min="1" max="24" inputmode="numeric"></div>
+      <div class="field"><label>병가 잔여(시간)</label><input class="input" id="s-sick" type="number" min="0" step="1" inputmode="numeric"></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>연가 잔여(일)</label><input class="input" id="s-annual" type="number" min="0" step="0.5" inputmode="decimal"></div>
+      <div class="field"><label>특별휴가 잔여(일)</label><input class="input" id="s-special" type="number" min="0" step="0.5" inputmode="decimal"></div>
+    </div>
+    <div class="switch-row"><div class="sw-lbl">토요일도 근무</div><button class="switch" id="s-sat"></button></div>
+    <div class="switch-row" style="border-top:1px solid var(--line)"><div class="sw-lbl">일요일도 근무</div><button class="switch" id="s-sun"></button></div>
+    <div class="note" style="margin-top:14px;">
+      ※ <b>병가</b>는 출국 전 마지막 근무일까지 조퇴로 소진, <b>연가·특별휴가</b>는 출국일~소집해제일을 채우는 데 쓰는 것으로 계산해요. (서로 분리)<br>
+      ※ 잔여는 <b>오늘 기준</b> 값. "사용 기록"에 추가하면 잔여에서 <b>자동 차감</b>됩니다.
+    </div>
+    <button class="btn btn-accent" id="s-save" style="margin-top:14px;">저장</button>
+    <button class="btn btn-danger" id="s-reset">기본값으로 초기화 (기록 유지)</button>
+    <button class="btn btn-ghost" data-close="set">닫기</button>
+  </div>
+</div>
+
+<!-- ═════════ 사용 기록 시트 ═════════ -->
+<div class="sheet-wrap hidden" id="log-wrap">
+  <div class="sheet-backdrop" data-close="log"></div>
+  <div class="sheet">
+    <div class="sheet-grip"></div>
+    <h3 id="log-title">사용 기록 추가</h3>
+    <p class="sub">실제로 쓴 병가·연가·특별휴가를 기록하면 잔여에서 차감되고 캘린더에 표시돼요.</p>
+    <div class="field"><label>날짜</label><input class="input" id="l-date" type="date"></div>
+    <div class="field">
+      <label>종류</label>
+      <div class="seg" id="l-type">
+        <button data-t="sick" class="on">병가(시간)</button>
+        <button data-t="annual">연가(일)</button>
+        <button data-t="special">특별휴가(일)</button>
+      </div>
+    </div>
+    <div class="field">
+      <label id="l-amt-label">사용 시간(시간)</label>
+      <input class="input" id="l-hours" type="number" min="0.5" step="0.5" inputmode="decimal" placeholder="예: 2">
+    </div>
+    <div class="day-logs" id="day-logs"></div>
+    <button class="btn btn-accent" id="l-save" style="margin-top:6px;">기록 저장</button>
+    <button class="btn btn-ghost" data-close="log">닫기</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ════════ 유틸 ════════ */
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const LS_THEME="hub-theme", LS_CFG="dday-cfg", LS_LOG="dday-log";
+const pad=n=>String(n).padStart(2,"0");
+function toast(m){ const t=$("#toast"); t.textContent=m; t.classList.add("show"); clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove("show"),1900); }
+
+/* ════════ 테마 ════════ */
+function setTheme(t){
+  document.documentElement.dataset.theme=t;
+  try{ localStorage.setItem(LS_THEME,t); }catch(e){}
+  const m=$('meta[name="theme-color"]'); if(m) m.content=(t==="dark"?"#111219":"#f4f4f1");
+  $$(".theme-btn").forEach(b=>b.textContent=(t==="dark"?"☀️":"🌙"));
+}
+$$(".theme-btn").forEach(b=>b.addEventListener("click",()=>setTheme(document.documentElement.dataset.theme==="dark"?"light":"dark")));
+setTheme(document.documentElement.dataset.theme||"light");
+
+/* ════════ 설정/기록 데이터 ════════ */
+const DEF={ start:"2025-01-16", end:"2026-10-15", departure:"2026-09-22", hpd:8, sat:false, sun:false, annual:6, sick:74, special:9 };
+function loadCfg(){ try{ return {...DEF, ...(JSON.parse(localStorage.getItem(LS_CFG))||{})}; }catch(e){ return {...DEF}; } }
+function saveCfg(){ try{ localStorage.setItem(LS_CFG, JSON.stringify(cfg)); }catch(e){} }
+let cfg=loadCfg();
+function loadLog(){ try{ return JSON.parse(localStorage.getItem(LS_LOG))||[]; }catch(e){ return []; } }
+function saveLog(){ try{ localStorage.setItem(LS_LOG, JSON.stringify(log)); }catch(e){} }
+let log=loadLog();
+
+/* 근무상황관리(스크린샷) 기준 — 표시용 */
+const SVC={
+  name:"이연준", start:"2025-01-16", end:"2026-10-15", dutyDays:638, extend:0, reduce:0,
+  annualBase:28, annualUsed:22, y1:"15 / 15", y2:"7 / 13",
+  sickBase:30, sickUsed:"20일 6시간",
+  specialBase:20, specialUsed:11, gong:1,
+  normal:257, military:16, jobEdu:12, baseEdu:5
+};
+
+/* ════════ 공휴일 (대한민국, 관공서 기준 · 대체공휴일 포함) ════════ */
+const HOL={
+  "2025-01-01":"신정","2025-01-27":"임시공휴일","2025-01-28":"설날","2025-01-29":"설날","2025-01-30":"설날",
+  "2025-03-01":"삼일절","2025-03-03":"대체공휴일","2025-05-05":"어린이날·석탄","2025-05-06":"대체공휴일",
+  "2025-06-06":"현충일","2025-08-15":"광복절","2025-10-03":"개천절","2025-10-06":"추석","2025-10-07":"추석","2025-10-08":"대체공휴일",
+  "2025-10-09":"한글날","2025-12-25":"성탄절",
+  "2026-01-01":"신정","2026-02-16":"설날","2026-02-17":"설날","2026-02-18":"설날","2026-03-01":"삼일절","2026-03-02":"대체공휴일",
+  "2026-05-05":"어린이날","2026-05-24":"석가탄신","2026-05-25":"대체공휴일","2026-06-06":"현충일",
+  "2026-08-15":"광복절","2026-08-17":"대체공휴일","2026-09-24":"추석","2026-09-25":"추석","2026-09-26":"추석","2026-09-28":"대체공휴일",
+  "2026-10-03":"개천절","2026-10-05":"대체공휴일","2026-10-09":"한글날","2026-12-25":"성탄절"
+};
+
+/* ════════ 날짜 유틸 ════════ */
+function iso(d){ return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate()); }
+function parse(s){ const a=s.split("-").map(Number); return new Date(a[0],a[1]-1,a[2]); }
+function addDays(d,n){ const x=new Date(d); x.setDate(x.getDate()+n); return x; }
+function today0(){ const t=new Date(); return new Date(t.getFullYear(),t.getMonth(),t.getDate()); }
+function isWeekend(d){ const w=d.getDay(); return (w===0&&!cfg.sun)||(w===6&&!cfg.sat); }
+function isHol(d){ return !!HOL[iso(d)]; }
+function isOff(d){ return isWeekend(d)||isHol(d); }
+function isWork(d){ return !isOff(d); }
+function dday(d){ return Math.round((parse(iso(d))-today0())/86400000); }
+const WD=["일","월","화","수","목","금","토"];
+function fmtDate(d){ return (d.getMonth()+1)+"월 "+d.getDate()+"일("+WD[d.getDay()]+")"; }
+function dot(s){ return iso(s).replace(/-/g,"."); }
+function workBack(end, n){ let d=new Date(end), c=0, g=0; while(c<n && g<6000){ d=addDays(d,-1); g++; if(isWork(d)) c++; } return d; }
+function workCount(a,bEx){ let d=new Date(a),c=0,g=0; while(d<bEx && g<30000){ if(isWork(d))c++; d=addDays(d,1); g++; } return c; }
+
+/* ════════ 잔여 계산 ════════ */
+function sum(type){ return log.filter(x=>x.type===type).reduce((s,x)=>s+(+x.hours||0),0); }
+function sickRemain(){ return Math.max(0, cfg.sick - sum("sick")); }               // 시간
+function annRemain(){ return Math.max(0, cfg.annual - sum("annual")/cfg.hpd); }     // 일
+function spcRemain(){ return Math.max(0, cfg.special - sum("special")/cfg.hpd); }   // 일
+function fmtH(h){ const hpd=cfg.hpd, d=Math.floor(h/hpd+1e-9), r=Math.round((h-d*hpd)*100)/100; let s=""; if(d) s+=d+"일"; if(r>0||!d) s+=(s?" ":"")+r+"시간"; return s||"0시간"; }
+function fmtDays(x){ return (Math.round(x*100)/100)+"일"; }
+
+/* 조기전역 휴가블록 = 연가+특별휴가(전부)를 소집해제 직전에 고정 배치 */
+function blockInfo(){
+  const ann=annRemain(), spc=spcRemain(), total=ann+spc;
+  const n=Math.max(0, Math.ceil(total-1e-9));
+  const end=parse(cfg.end);
+  const firstLeave = workBack(end, Math.max(1,n));
+  const lastWork   = workBack(end, n+1);
+  const days=[]; let d=new Date(firstLeave); while(d<end){ if(isWork(d)) days.push(iso(d)); d=addDays(d,1); }
+  const labels={}; const annN=Math.round(ann);
+  days.forEach((is,i)=> labels[is]= i<annN ? "annual" : "special");
+  return { ann, spc, total, n, firstLeave, lastWork, days, labels };
+}
+function lastWorkDay(){ return blockInfo().lastWork; }
+function fixedBlockSet(){ const bi=blockInfo(), s=new Set(); let d=new Date(bi.firstLeave), end=parse(cfg.end); while(d<end){ s.add(iso(d)); d=addDays(d,1);} return s; }
+function blockLabels(){ return blockInfo().labels; }
+
+/* 병가 시나리오 (출국 전 마지막 근무일에 끝나도록 거꾸로) */
+function scenarios(){
+  const remain=sickRemain(), anchor=blockInfo().firstLeave;
+  const rates=[...new Set([3,4,5,cfg.hpd])].sort((a,b)=>a-b);
+  return rates.map(r=>{
+    const days=remain/r, whole=Math.floor(days+1e-9), rem=Math.round((remain-whole*r)*100)/100;
+    const need=Math.max(0, Math.ceil(days-1e-9));
+    const start= need>0 ? workBack(anchor,need) : null;
+    return { r, days, whole, rem, need, start, full:r>=cfg.hpd };
+  });
+}
+function scenarioSet(rate){ if(!rate) return new Set(); const remain=sickRemain(), need=Math.max(0,Math.ceil(remain/rate-1e-9)), anchor=blockInfo().firstLeave, s=new Set(); for(let i=1;i<=need;i++) s.add(iso(workBack(anchor,i))); return s; }
+const SC_COLORS={3:"#d64545",4:"#e6920b",5:"#2f9e63",8:"#2563eb"};
+function scColor(r){ return SC_COLORS[r]||"var(--accent)"; }
+
+/* ════════ 렌더 ════════ */
+let viewY, viewM, activeScenario=null, showLeave=true;
+
+function renderStats(){
+  const start=parse(cfg.start), end=parse(cfg.end), dep=parse(cfg.departure), t=today0();
+  const ddEnd=dday(end), ddDep=dday(dep), lw=lastWorkDay(), ddLw=dday(lw);
+  const total=Math.max(1,(end-start)/86400000), done=Math.min(total,Math.max(0,(t-start)/86400000));
+  const pct=Math.round(done/total*100);
+  const workLeft=workCount(t<start?start:t, addDays(lw,1));
+  $("#hero-greet").textContent = ddDep>0 ? `호주 출국까지 D-${ddDep}` : (ddDep===0?"오늘 출국! ✈️":"출국 완료");
+  $("#stat-grid").innerHTML = `
+    <div class="stat hl"><div class="s-lbl">✈️ 호주 출국 (조기전역)</div><div class="s-big">${ddDep>=0?`D-${ddDep}`:`D+${-ddDep}`}</div><div class="s-sub">${dot(dep)} · ${fmtDate(dep)}</div></div>
+    <div class="stat"><div class="s-lbl">🎉 실질 마지막 근무일</div><div class="s-big">${ddLw>=0?`D-${ddLw}`:`D+${-ddLw}`}</div><div class="s-sub">${fmtDate(lw)}<br>이후 소집해제까지 휴가</div></div>
+    <div class="stat"><div class="s-lbl">📅 소집해제(공식)</div><div class="s-big">${ddEnd>=0?`D-${ddEnd}`:`D+${-ddEnd}`}</div><div class="s-sub">${dot(end)} · 진행률 ${pct}%</div><div class="prog"><i style="width:${pct}%"></i></div></div>
+    <div class="stat"><div class="s-lbl">🧳 앞으로 출근</div><div class="s-big">${workLeft}<small style="font-size:15px;font-weight:700"> 일</small></div><div class="s-sub">오늘~마지막 근무일(주말·공휴일 제외)</div></div>`;
+}
+
+function renderEarly(){
+  const bi=blockInfo(), end=parse(cfg.end), dep=parse(cfg.departure);
+  const depInBlock = parse(cfg.departure) >= parse(iso(bi.firstLeave));
+  const freeBefore = depInBlock ? workCount(parse(iso(bi.firstLeave)), parse(cfg.departure)) : 0;
+  $("#early-tail").textContent = `연가+특별 ${fmtDays(bi.total)} 고정`;
+  $("#early-body").innerHTML = `
+    <div class="kv"><span class="k">실질 마지막 근무일</span><span class="v"><span class="big-date">${fmtDate(bi.lastWork)}</span><br><small>${dot(bi.lastWork)} · D-${dday(bi.lastWork)} · 이 날까지만 출근</small></span></div>
+    <div class="kv"><span class="k">조기전역 휴가구간 (완전 고정)</span><span class="v">${fmtDate(bi.firstLeave)} ~ ${fmtDate(end)}<br><small>${dot(bi.firstLeave)} ~ ${dot(end)} · ${bi.n}근무일</small></span></div>
+    <div class="kv"><span class="k">사용 휴가</span><span class="v">연가 ${fmtDays(bi.ann)} + 특별 ${fmtDays(bi.spc)} = ${fmtDays(bi.total)}</span></div>
+    <div class="kv"><span class="k">✈️ 호주 출국</span><span class="v">${fmtDate(dep)} <small>(D-${dday(dep)})</small></span></div>
+    <div class="note ${depInBlock?"":"warn"}">${depInBlock
+      ? `연가(${fmtDays(bi.ann)})·특별휴가(${fmtDays(bi.spc)})를 <b>전부 막판에 몰아</b> 써서 <b>${fmtDate(bi.firstLeave)}부터</b> 출근 안 하고 소집해제(${dot(end)})까지 휴가로 채워요. 출국일 <b>${fmtDate(dep)}</b>은 이 휴가구간 안이라 안전합니다(출국보다 <b>${freeBefore}근무일</b> 더 일찍 자유). 캘린더에 날짜별로 <b>연가/특별휴가</b>가 완전히 표기돼요.`
+      : `⚠️ 휴가구간 시작(${fmtDate(bi.firstLeave)})이 출국일(${fmtDate(dep)})보다 늦어요. 연가+특별휴가가 부족해 출국 후~휴가시작 사이를 못 덮습니다. 잔여를 확인하세요.`}</div>`;
+}
+
+function renderSick(){
+  const scs=scenarios(), pick=scs.find(s=>s.r===3)||scs[0];
+  const bal = `<div class="bal-grid">
+    <div class="bal sick"><div class="b-lbl">병가 잔여</div><div class="b-v">${fmtH(sickRemain())}</div><div class="b-sub">${sickRemain()}시간</div></div>
+    <div class="bal annual"><div class="b-lbl">연가 잔여</div><div class="b-v">${fmtDays(annRemain())}</div><div class="b-sub">출국 후 사용</div></div>
+    <div class="bal special"><div class="b-lbl">특별휴가</div><div class="b-v">${fmtDays(spcRemain())}</div><div class="b-sub">출국 후 사용</div></div></div>`;
+  $("#sick-body").innerHTML = bal + `
+    <div class="note" style="margin-bottom:6px;">병가 <b>${fmtH(sickRemain())}</b>를 <b>하루 3시간씩</b> 조퇴로 쓰면 <b>${pick.start?fmtDate(pick.start):"-"}부터</b> 시작해서 마지막 근무일(${fmtDate(lastWorkDay())})까지 다 소진돼요. (아래에서 하루 시간 바꿔 비교)</div>
+    <table class="sc-table">
+      <thead><tr><th>병가 쓰는 법</th><th>가능 기간</th><th>시작일</th></tr></thead>
+      <tbody>${scs.map(s=>`
+        <tr data-rate="${s.r}" class="${activeScenario===s.r?"on":""}">
+          <td class="num"><span class="rt"><span class="dot" style="background:${scColor(s.r)}"></span>${s.full?`하루 전체(${s.r}h)`:`하루 ${s.r}시간`}</span></td>
+          <td class="num">${s.whole}일${s.rem>0?` <small style="color:var(--sub);font-weight:600">+${s.rem}시간</small>`:""}</td>
+          <td>${s.start?fmtDate(s.start):"-"}</td>
+        </tr>`).join("")}</tbody>
+    </table>
+    <div class="note">하루에 적게 나눠 쓸수록(조퇴) 더 여러 날에 걸쳐 쉴 수 있어요. <b>하루 전체</b>는 그날 아예 안 나가는 경우. 모두 <b>마지막 근무일(${fmtDate(lastWorkDay())})</b>에 끝나도록 거꾸로 계산했어요(연가·특별휴가 구간과 안 겹침). 행을 누르면 캘린더에 구간 표시.</div>`;
+  $$("#sick-body tr[data-rate]").forEach(tr=>tr.onclick=()=>{ const r=+tr.dataset.rate; activeScenario=activeScenario===r?null:r; renderSick(); renderFilter(); renderCalendar(); });
+}
+
+function renderCover(){
+  const bi=blockInfo(), end=parse(cfg.end);
+  $("#cover-body").innerHTML = `
+    <div class="kv"><span class="k">연가 잔여</span><span class="v">${fmtDays(bi.ann)} <small>(기준28·사용22)</small></span></div>
+    <div class="kv"><span class="k">특별휴가 잔여</span><span class="v">${fmtDays(bi.spc)} <small>(기준20·사용11)</small></span></div>
+    <div class="kv"><span class="k">합계 → 전부 조기전역에 사용</span><span class="v">${fmtDays(bi.total)} = ${bi.n}근무일</span></div>
+    <div class="kv"><span class="k">휴가구간 (완전 고정)</span><span class="v">${fmtDate(bi.firstLeave)} ~ ${fmtDate(end)}</span></div>
+    <div class="note">결정대로 연가·특별휴가는 다른 데 쓰지 않고 <b>전부 조기전역(막판 몰아쓰기)</b>에만 써요. 캘린더에 <b>연가</b>(파랑)·<b>특별휴가</b>(보라)로 날짜마다 완전히 표기됩니다. 병가는 이와 분리되어 그 전에 조퇴로 소진해요.</div>`;
+}
+
+function renderSvc(){
+  const annRem=SVC.annualBase-SVC.annualUsed;
+  $("#svc-body").innerHTML = `
+    <div class="kv"><span class="k">성명 · 의무복무</span><span class="v">${SVC.name} · ${SVC.dutyDays}일 <small>(연장 ${SVC.extend}·감소 ${SVC.reduce})</small></span></div>
+    <div class="kv"><span class="k">연가</span><span class="v">사용 ${SVC.annualUsed}일 / 기준 ${SVC.annualBase}일 · <span style="color:var(--accent)">잔여 ${annRem}일</span><br><small>1차 ${SVC.y1} · 2차 ${SVC.y2}</small></span></div>
+    <div class="kv"><span class="k">병가</span><span class="v">사용 ${SVC.sickUsed} / 기준 ${SVC.sickBase}일 · <span style="color:var(--red)">잔여 9일 2시간</span></span></div>
+    <div class="kv"><span class="k">특별휴가 · 공가</span><span class="v">사용 ${SVC.specialUsed}일 / 기준 ${SVC.specialBase}일 · <span style="color:var(--purple)">잔여 ${fmtDays(spcRemain())}</span> · 공가 ${SVC.gong}일</span></div>
+    <div class="svc-grid" style="margin-top:10px;">
+      <div class="svc-cell"><div class="c-k">정상출근</div><div class="c-v">${SVC.normal}건</div></div>
+      <div class="svc-cell"><div class="c-k">무단(조퇴/지각/외출/결근)</div><div class="c-v">0건 <small>✓</small></div></div>
+      <div class="svc-cell"><div class="c-k">군사교육</div><div class="c-v">${SVC.military}건</div></div>
+      <div class="svc-cell"><div class="c-k">직무·기본교육</div><div class="c-v">${SVC.jobEdu} · ${SVC.baseEdu}건</div></div>
+    </div>
+    <div class="note">근무상황관리 화면(2025-01-07 ~ 2026-10-23 조회) 기준. 잔여(병가 9일2시간·연가 ${SVC.annualBase-SVC.annualUsed}일·특별 ${fmtDays(spcRemain())})는 위 계획에 그대로 반영돼요.</div>`;
+}
+
+function renderFilter(){
+  const scs=scenarios();
+  $("#cal-filter").innerHTML =
+    `<button class="chip ${showLeave?"on":""}" data-f="leave">✈️ 출국~소집해제</button>` +
+    scs.map(s=>`<button class="chip ${activeScenario===s.r?"on":""}" data-f="sc-${s.r}">🩹 ${s.full?`하루전체`:`병가 ${s.r}h`}</button>`).join("");
+  $$("#cal-filter .chip").forEach(c=>c.onclick=()=>{
+    const f=c.dataset.f;
+    if(f==="leave"){ showLeave=!showLeave; } else { const r=+f.split("-")[1]; activeScenario=activeScenario===r?null:r; }
+    renderFilter(); renderSick(); renderCalendar();
+  });
+}
+
+function renderCalendar(){
+  $("#cal-title").textContent = viewY+"."+pad(viewM+1);
+  const first=new Date(viewY,viewM,1), startDow=first.getDay(), days=new Date(viewY,viewM+1,0).getDate();
+  const lvSet = showLeave? fixedBlockSet() : new Set();
+  const scSet = scenarioSet(activeScenario);
+  const tIso=iso(today0()), startIso=cfg.start, endIso=cfg.end, depIso=cfg.departure;
+  const labels=blockLabels();
+  const byDate={}; log.forEach(x=>{ (byDate[x.date]=byDate[x.date]||[]).push(x); });
+  let html="";
+  WD.forEach((w,i)=> html+=`<div class="cal-dow ${i===0?"sun":i===6?"sat":""}">${w}</div>`);
+  for(let i=0;i<startDow;i++) html+=`<div class="cal-cell empty"></div>`;
+  for(let dnum=1; dnum<=days; dnum++){
+    const d=new Date(viewY,viewM,dnum), is=iso(d), w=d.getDay();
+    const cls=["cal-cell"];
+    if(w===0) cls.push("sun"); if(w===6) cls.push("sat");
+    if(isOff(d)) cls.push("off");
+    if(lvSet.has(is)) cls.push("leave");
+    if(scSet.has(is)) cls.push("sc");
+    if(is===tIso) cls.push("today");
+    let tags="";
+    if(is===startIso) tags+=`<span class="cal-tag annual">복무시작</span>`;
+    if(is===endIso) tags+=`<span class="cal-tag lv">소집해제</span>`;
+    if(is===depIso) tags+=`<span class="cal-tag dep">✈️출국</span>`;
+    if(lvSet.has(is) && isWork(d) && is!==endIso){ const lt=labels[is]||"annual"; tags+=`<span class="cal-tag ${lt}">${lt==="annual"?"연가":"특별휴가"}</span>`; }
+    if(scSet.has(is)) tags+=`<span class="cal-tag scn">조퇴${activeScenario}h</span>`;
+    (byDate[is]||[]).forEach(x=>{
+      const txt=x.type==="sick"?`병가 ${x.hours}h`:x.type==="annual"?`연가`:`특별`;
+      tags+=`<span class="cal-tag ${x.type}">${txt}</span>`;
+    });
+    const hol=HOL[is];
+    html+=`<div class="${cls.join(" ")}" data-date="${is}"><div class="cal-d">${dnum}</div>${hol?`<div class="cal-hol">${hol}</div>`:""}${tags}</div>`;
+  }
+  $("#cal-grid").innerHTML=html;
+  $$("#cal-grid .cal-cell:not(.empty)").forEach(c=>c.onclick=()=>openLog(c.dataset.date));
+}
+
+function renderLog(){
+  $("#log-tail").textContent=`병가 잔여 ${fmtH(sickRemain())}`;
+  if(!log.length){ $("#log-list").innerHTML=`<div class="log-empty">아직 기록이 없어요. 캘린더 날짜를 누르거나 아래 버튼으로 추가하세요.</div>`; return; }
+  const sorted=[...log].sort((a,b)=> a.date<b.date?1:-1);
+  $("#log-list").innerHTML = sorted.map(x=>{
+    const tn=x.type==="sick"?"병가":x.type==="annual"?"연가":"특별휴가";
+    const amt=x.type==="sick"?`${x.hours}시간`:`${Math.round(x.hours/cfg.hpd*100)/100}일`;
+    return `<div class="log-item"><span class="li-date">${x.date.slice(5).replace("-",".")}</span><span class="li-type ${x.type}">${tn}</span><span class="li-amt">−${amt}</span><button class="li-del" data-id="${x.id}" title="삭제">✕</button></div>`;
+  }).join("");
+  $$("#log-list .li-del").forEach(b=>b.onclick=()=>{ log=log.filter(x=>x.id!==b.dataset.id); saveLog(); renderAll(); toast("기록을 삭제했어요"); });
+}
+
+function renderAll(){ renderStats(); renderEarly(); renderSick(); renderCover(); renderSvc(); renderFilter(); renderCalendar(); renderLog(); }
+
+/* ════════ 캘린더 네비 ════════ */
+function calGo(y,m){ if(m<0){y--;m=11;} if(m>11){y++;m=0;} viewY=y; viewM=m; renderCalendar(); }
+$("#cal-prev").onclick=()=>calGo(viewY,viewM-1);
+$("#cal-next").onclick=()=>calGo(viewY,viewM+1);
+$("#cal-today").onclick=()=>{ const t=today0(); viewY=t.getFullYear(); viewM=t.getMonth(); renderCalendar(); };
+
+/* ════════ 시트 공통 ════════ */
+function openSheet(id){ $("#"+id+"-wrap").classList.remove("hidden"); document.body.style.overflow="hidden"; }
+function closeSheet(id){ $("#"+id+"-wrap").classList.add("hidden"); document.body.style.overflow=""; }
+$$("[data-close]").forEach(el=>el.onclick=()=>closeSheet(el.dataset.close));
+
+/* ════════ 설정 ════════ */
+function fillSettings(){
+  $("#s-start").value=cfg.start; $("#s-end").value=cfg.end; $("#s-departure").value=cfg.departure; $("#s-hpd").value=cfg.hpd;
+  $("#s-sick").value=cfg.sick; $("#s-annual").value=cfg.annual; $("#s-special").value=cfg.special;
+  $("#s-sat").classList.toggle("on",!!cfg.sat); $("#s-sun").classList.toggle("on",!!cfg.sun);
+}
+$("#btn-settings").onclick=()=>{ fillSettings(); openSheet("set"); };
+$("#s-sat").onclick=()=>$("#s-sat").classList.toggle("on");
+$("#s-sun").onclick=()=>$("#s-sun").classList.toggle("on");
+$("#s-save").onclick=()=>{
+  const start=$("#s-start").value, end=$("#s-end").value, departure=$("#s-departure").value;
+  if(!start||!end||parse(end)<=parse(start)){ toast("소집해제일이 시작일보다 뒤여야 해요"); return; }
+  if(!departure||parse(departure)>parse(end)||parse(departure)<parse(start)){ toast("출국일은 시작~해제일 사이여야 해요"); return; }
+  cfg={ start, end, departure,
+    hpd:Math.max(1,+$("#s-hpd").value||8),
+    sick:Math.max(0,+$("#s-sick").value||0),
+    annual:Math.max(0,+$("#s-annual").value||0),
+    special:Math.max(0,+$("#s-special").value||0),
+    sat:$("#s-sat").classList.contains("on"), sun:$("#s-sun").classList.contains("on") };
+  saveCfg(); closeSheet("set"); renderAll(); toast("저장했어요 ✓");
+};
+$("#s-reset").onclick=()=>{ if(confirm("설정을 기본값으로 되돌릴까요? (사용 기록은 유지)")){ cfg={...DEF}; saveCfg(); fillSettings(); renderAll(); toast("기본값으로 초기화했어요"); } };
+
+/* ════════ 사용 기록 ════════ */
+let logDate=null, logType="sick";
+function setLogType(t){
+  logType=t;
+  $$("#l-type button").forEach(b=>b.classList.toggle("on",b.dataset.t===t));
+  $("#l-amt-label").textContent = t==="sick" ? "사용 시간(시간)" : "사용 일수(일)";
+  $("#l-hours").value = t==="sick" ? "" : "1";
+}
+$$("#l-type button").forEach(b=>b.onclick=()=>setLogType(b.dataset.t));
+function renderDayLogs(){
+  const items=log.filter(x=>x.date===logDate);
+  $("#day-logs").innerHTML = items.length ? `<div style="font-size:11.5px;font-weight:800;color:var(--sub);margin:2px 2px 8px">이 날 기록</div>`+
+    items.map(x=>{ const tn=x.type==="sick"?"병가":x.type==="annual"?"연가":"특별휴가"; const amt=x.type==="sick"?`${x.hours}시간`:`${Math.round(x.hours/cfg.hpd*100)/100}일`;
+      return `<div class="dl-item"><span class="li-type ${x.type}">${tn}</span><span>−${amt}</span><button class="dl-del" data-id="${x.id}">✕</button></div>`; }).join("") : "";
+  $$("#day-logs .dl-del").forEach(b=>b.onclick=()=>{ log=log.filter(x=>x.id!==b.dataset.id); saveLog(); renderDayLogs(); renderAll(); toast("삭제했어요"); });
+}
+function openLog(date){
+  logDate=date||iso(today0()); $("#l-date").value=logDate;
+  $("#log-title").textContent = date? `${date.slice(5).replace("-",".")} 사용 기록` : "사용 기록 추가";
+  setLogType("sick"); renderDayLogs(); openSheet("log");
+}
+$("#btn-addlog").onclick=()=>openLog(null);
+$("#l-date").onchange=()=>{ logDate=$("#l-date").value; renderDayLogs(); };
+$("#l-save").onclick=()=>{
+  const date=$("#l-date").value; let v=+$("#l-hours").value;
+  if(!date){ toast("날짜를 선택하세요"); return; }
+  if(!(v>0)){ toast("사용량을 입력하세요"); return; }
+  const hours = logType==="sick" ? v : v*cfg.hpd;
+  log.push({ id:"l"+Date.now().toString(36)+Math.random().toString(36).slice(2,5), date, type:logType, hours });
+  saveLog(); logDate=date; renderDayLogs(); renderAll();
+  $("#l-hours").value = logType==="sick"?"":"1";
+  toast(`기록 추가 ✓ · 병가 잔여 ${fmtH(sickRemain())}`);
+};
+
+/* ════════ 시작 ════════ */
+(function init(){ const t=today0(); viewY=t.getFullYear(); viewM=t.getMonth(); renderAll(); })();
+</script>
+</body>
+</html>
