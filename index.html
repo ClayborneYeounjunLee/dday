@@ -67,6 +67,7 @@ button{ font-family:inherit; color:inherit; touch-action:manipulation; -webkit-u
 .appbar-actions{ display:flex; gap:8px; }
 .icon-btn{ background:var(--card); color:var(--sub); cursor:pointer; width:42px; height:42px; border-radius:12px; font-size:17px; border:1px solid var(--line); flex:0 0 auto; }
 .moa-btn{ display:inline-flex; align-items:center; justify-content:center; text-decoration:none; color:var(--accent); font-weight:700; }
+.lang-btn{ font-size:13px; font-weight:800; letter-spacing:.02em; color:var(--ink); }
 .icon-btn:active{ transform:scale(.95); }
 
 .hero{ margin:16px 2px 16px; }
@@ -216,40 +217,41 @@ footer a{ color:var(--accent); text-decoration:none; }
   <div class="appbar">
     <div class="logo"><span class="logo-mark">D</span>디데이<small>D-Day</small></div>
     <div class="appbar-actions">
-      <a class="icon-btn moa-btn" href="https://nsaosulfate.github.io/moa/" title="모아로 돌아가기" aria-label="모아로 돌아가기">◈</a>
-      <button class="icon-btn" id="btn-settings" title="설정">⚙️</button>
-      <button class="icon-btn theme-btn" title="테마 전환">🌙</button>
+      <a class="icon-btn moa-btn" href="https://nsaosulfate.github.io/moa/" data-i18n-title="moaTitle" data-i18n-aria="moaTitle" title="모아로 돌아가기" aria-label="모아로 돌아가기">◈</a>
+      <button class="icon-btn" id="btn-settings" data-i18n-title="settingsTitle" title="설정">⚙️</button>
+      <button class="icon-btn lang-btn">EN</button>
+      <button class="icon-btn theme-btn" data-i18n-title="themeTitle" title="테마 전환">🌙</button>
     </div>
   </div>
 
   <div class="hero">
     <div class="hero-greet" id="hero-greet">호주 출국까지</div>
-    <div class="hero-sub" id="hero-sub">출국 전에 병가를 다 쓰고, 출국~소집해제는 연가·특별휴가로 채우는 계획이에요.</div>
+    <div class="hero-sub" id="hero-sub" data-i18n="heroSub">출국 전에 병가를 다 쓰고, 출국~소집해제는 연가·특별휴가로 채우는 계획이에요.</div>
   </div>
 
   <div class="stat-grid" id="stat-grid"></div>
 
   <!-- 조기전역(고정) -->
   <div class="panel">
-    <div class="panel-h"><span class="ic">✈️</span>조기전역 — 출국일 고정<span class="tail" id="early-tail"></span></div>
+    <div class="panel-h"><span class="ic">✈️</span><span data-i18n="panelEarly">조기전역 — 출국일 고정</span><span class="tail" id="early-tail"></span></div>
     <div id="early-body"></div>
   </div>
 
   <!-- 병가 -->
   <div class="panel">
-    <div class="panel-h"><span class="ic">🩹</span>병가 — 출국 전에 소진<span class="tail">행을 누르면 캘린더에 표시</span></div>
+    <div class="panel-h"><span class="ic">🩹</span><span data-i18n="panelSick">병가 — 출국 전에 소진</span><span class="tail" data-i18n="panelSickTail">행을 누르면 캘린더에 표시</span></div>
     <div id="sick-body"></div>
   </div>
 
   <!-- 연가·특별휴가 -->
   <div class="panel">
-    <div class="panel-h"><span class="ic">🌴</span>연가 · 특별휴가 — 출국 후 채우기</div>
+    <div class="panel-h"><span class="ic">🌴</span><span data-i18n="panelCover">연가 · 특별휴가 — 출국 후 채우기</span></div>
     <div id="cover-body"></div>
   </div>
 
   <!-- 복무 현황 (근무상황관리 기준) -->
   <div class="panel">
-    <div class="panel-h"><span class="ic">📋</span>복무 현황<span class="tail">근무상황관리 기준</span></div>
+    <div class="panel-h"><span class="ic">📋</span><span data-i18n="panelSvc">복무 현황</span><span class="tail" data-i18n="panelSvcTail">근무상황관리 기준</span></div>
     <div id="svc-body"></div>
   </div>
 
@@ -258,7 +260,7 @@ footer a{ color:var(--accent); text-decoration:none; }
     <div class="cal-top">
       <div class="cal-title" id="cal-title">2026.06</div>
       <div class="cal-nav">
-        <button class="cal-today" id="cal-today">오늘</button>
+        <button class="cal-today" id="cal-today" data-i18n="calToday">오늘</button>
         <button id="cal-prev">‹</button>
         <button id="cal-next">›</button>
       </div>
@@ -266,25 +268,25 @@ footer a{ color:var(--accent); text-decoration:none; }
     <div class="chip-row" id="cal-filter"></div>
     <div class="cal-grid" id="cal-grid" style="margin-top:12px;"></div>
     <div class="legend">
-      <span><i style="background:var(--green-soft);border:1px solid var(--green)"></i>조기전역 휴가(연가·특별, 고정)</span>
-      <span><i style="background:var(--amber-soft);box-shadow:inset 0 0 0 2px var(--amber)"></i>병가 조퇴구간</span>
-      <span><i style="background:var(--red-soft)"></i>병가 기록</span>
-      <span><i style="background:var(--accent-soft)"></i>연가</span>
-      <span><i style="background:var(--purple-soft)"></i>특별휴가</span>
-      <span><i style="background:var(--input-bg);border:1px solid var(--line)"></i>주말·공휴일</span>
+      <span><i style="background:var(--green-soft);border:1px solid var(--green)"></i><span data-i18n="legEarly">조기전역 휴가(연가·특별, 고정)</span></span>
+      <span><i style="background:var(--amber-soft);box-shadow:inset 0 0 0 2px var(--amber)"></i><span data-i18n="legSickRange">병가 조퇴구간</span></span>
+      <span><i style="background:var(--red-soft)"></i><span data-i18n="legSickLog">병가 기록</span></span>
+      <span><i style="background:var(--accent-soft)"></i><span data-i18n="legAnnual">연가</span></span>
+      <span><i style="background:var(--purple-soft)"></i><span data-i18n="legSpecial">특별휴가</span></span>
+      <span><i style="background:var(--input-bg);border:1px solid var(--line)"></i><span data-i18n="legHoliday">주말·공휴일</span></span>
     </div>
   </div>
 
   <!-- 사용 기록 -->
   <div class="panel">
-    <div class="panel-h"><span class="ic">📝</span>사용 기록<span class="tail" id="log-tail"></span></div>
+    <div class="panel-h"><span class="ic">📝</span><span data-i18n="panelLog">사용 기록</span><span class="tail" id="log-tail"></span></div>
     <div class="log-list" id="log-list"></div>
-    <button class="btn btn-ghost" id="btn-addlog" style="margin-top:12px;">＋ 사용 기록 추가</button>
+    <button class="btn btn-ghost" id="btn-addlog" style="margin-top:12px;" data-i18n="addLogBtn">＋ 사용 기록 추가</button>
   </div>
 
   <footer>
-    디데이 · D-Day — <a href="../index.html">모아로 돌아가기</a><br>
-    모든 데이터는 이 브라우저에만 저장돼요(localStorage). 날짜·잔여·가정은 ⚙️에서 바꿀 수 있어요.
+    <span data-i18n="footerBrand">디데이 · D-Day</span> — <a href="../index.html" data-i18n="footerMoa">모아로 돌아가기</a><br>
+    <span data-i18n="footerNote">모든 데이터는 이 브라우저에만 저장돼요(localStorage). 날짜·잔여·가정은 ⚙️에서 바꿀 수 있어요.</span>
   </footer>
 </div>
 
@@ -293,31 +295,31 @@ footer a{ color:var(--accent); text-decoration:none; }
   <div class="sheet-backdrop" data-close="set"></div>
   <div class="sheet">
     <div class="sheet-grip"></div>
-    <h3>설정</h3>
-    <p class="sub">날짜·잔여 휴가·가정을 입력하세요. 바꾸면 모든 계산과 캘린더가 즉시 갱신돼요.</p>
+    <h3 data-i18n="setTitle">설정</h3>
+    <p class="sub" data-i18n="setSub">날짜·잔여 휴가·가정을 입력하세요. 바꾸면 모든 계산과 캘린더가 즉시 갱신돼요.</p>
     <div class="row2">
-      <div class="field"><label>소집일자(복무 시작)</label><input class="input" id="s-start" type="date"></div>
-      <div class="field"><label>소집해제 예정일</label><input class="input" id="s-end" type="date"></div>
+      <div class="field"><label data-i18n="fStart">소집일자(복무 시작)</label><input class="input" id="s-start" type="date"></div>
+      <div class="field"><label data-i18n="fEnd">소집해제 예정일</label><input class="input" id="s-end" type="date"></div>
     </div>
-    <div class="field"><label>출국일 ✈️ (조기전역 고정 기준)</label><input class="input" id="s-departure" type="date"></div>
+    <div class="field"><label data-i18n="fDeparture">출국일 ✈️ (조기전역 고정 기준)</label><input class="input" id="s-departure" type="date"></div>
     <div class="row2">
-      <div class="field"><label>하루 복무시간(시간)</label><input class="input" id="s-hpd" type="number" min="1" max="24" inputmode="numeric"></div>
-      <div class="field"><label>병가 잔여(시간)</label><input class="input" id="s-sick" type="number" min="0" step="1" inputmode="numeric"></div>
+      <div class="field"><label data-i18n="fHpd">하루 복무시간(시간)</label><input class="input" id="s-hpd" type="number" min="1" max="24" inputmode="numeric"></div>
+      <div class="field"><label data-i18n="fSick">병가 잔여(시간)</label><input class="input" id="s-sick" type="number" min="0" step="1" inputmode="numeric"></div>
     </div>
     <div class="row2">
-      <div class="field"><label>연가 잔여(일)</label><input class="input" id="s-annual" type="number" min="0" step="0.5" inputmode="decimal"></div>
-      <div class="field"><label>특별휴가 잔여(일)</label><input class="input" id="s-special" type="number" min="0" step="0.5" inputmode="decimal"></div>
+      <div class="field"><label data-i18n="fAnnual">연가 잔여(일)</label><input class="input" id="s-annual" type="number" min="0" step="0.5" inputmode="decimal"></div>
+      <div class="field"><label data-i18n="fSpecial">특별휴가 잔여(일)</label><input class="input" id="s-special" type="number" min="0" step="0.5" inputmode="decimal"></div>
     </div>
-    <div class="switch-row"><div class="sw-lbl">토요일도 근무</div><button class="switch" id="s-sat"></button></div>
-    <div class="switch-row" style="border-top:1px solid var(--line)"><div class="sw-lbl">일요일도 근무</div><button class="switch" id="s-sun"></button></div>
-    <div class="switch-row" style="border-top:1px solid var(--line)"><div class="sw-lbl">소집해제일도 휴가에 포함 <small style="color:var(--sub);font-weight:600">(연가)</small></div><button class="switch" id="s-inclend"></button></div>
-    <div class="note" style="margin-top:14px;">
+    <div class="switch-row"><div class="sw-lbl" data-i18n="swSat">토요일도 근무</div><button class="switch" id="s-sat"></button></div>
+    <div class="switch-row" style="border-top:1px solid var(--line)"><div class="sw-lbl" data-i18n="swSun">일요일도 근무</div><button class="switch" id="s-sun"></button></div>
+    <div class="switch-row" style="border-top:1px solid var(--line)"><div class="sw-lbl" data-i18n="swInclEnd">소집해제일도 휴가에 포함 <small style="color:var(--sub);font-weight:600">(연가)</small></div><button class="switch" id="s-inclend"></button></div>
+    <div class="note" style="margin-top:14px;" data-i18n="setNote">
       ※ <b>병가</b>는 출국 전 마지막 근무일까지 조퇴로 소진, <b>연가·특별휴가</b>는 출국일~소집해제일을 채우는 데 쓰는 것으로 계산해요. (서로 분리)<br>
       ※ 잔여는 <b>오늘 기준</b> 값. "사용 기록"에 추가하면 잔여에서 <b>자동 차감</b>됩니다.
     </div>
-    <button class="btn btn-accent" id="s-save" style="margin-top:14px;">저장</button>
-    <button class="btn btn-danger" id="s-reset">기본값으로 초기화 (기록 유지)</button>
-    <button class="btn btn-ghost" data-close="set">닫기</button>
+    <button class="btn btn-accent" id="s-save" style="margin-top:14px;" data-i18n="saveBtn">저장</button>
+    <button class="btn btn-danger" id="s-reset" data-i18n="resetBtn">기본값으로 초기화 (기록 유지)</button>
+    <button class="btn btn-ghost" data-close="set" data-i18n="closeBtn">닫기</button>
   </div>
 </div>
 
@@ -327,23 +329,23 @@ footer a{ color:var(--accent); text-decoration:none; }
   <div class="sheet">
     <div class="sheet-grip"></div>
     <h3 id="log-title">사용 기록 추가</h3>
-    <p class="sub">실제로 쓴 병가·연가·특별휴가를 기록하면 잔여에서 차감되고 캘린더에 표시돼요.</p>
-    <div class="field"><label>날짜</label><input class="input" id="l-date" type="date"></div>
+    <p class="sub" data-i18n="logSheetSub">실제로 쓴 병가·연가·특별휴가를 기록하면 잔여에서 차감되고 캘린더에 표시돼요.</p>
+    <div class="field"><label data-i18n="lDate">날짜</label><input class="input" id="l-date" type="date"></div>
     <div class="field">
-      <label>종류</label>
+      <label data-i18n="lType">종류</label>
       <div class="seg" id="l-type">
-        <button data-t="sick" class="on">병가(시간)</button>
-        <button data-t="annual">연가(일)</button>
-        <button data-t="special">특별휴가(일)</button>
+        <button data-t="sick" class="on" data-i18n="lTypeSick">병가(시간)</button>
+        <button data-t="annual" data-i18n="lTypeAnnual">연가(일)</button>
+        <button data-t="special" data-i18n="lTypeSpecial">특별휴가(일)</button>
       </div>
     </div>
     <div class="field">
       <label id="l-amt-label">사용 시간(시간)</label>
-      <input class="input" id="l-hours" type="number" min="0.5" step="0.5" inputmode="decimal" placeholder="예: 2">
+      <input class="input" id="l-hours" type="number" min="0.5" step="0.5" inputmode="decimal" data-i18n-ph="lHoursPh" placeholder="예: 2">
     </div>
     <div class="day-logs" id="day-logs"></div>
-    <button class="btn btn-accent" id="l-save" style="margin-top:6px;">기록 저장</button>
-    <button class="btn btn-ghost" data-close="log">닫기</button>
+    <button class="btn btn-accent" id="l-save" style="margin-top:6px;" data-i18n="lSaveBtn">기록 저장</button>
+    <button class="btn btn-ghost" data-close="log" data-i18n="closeBtn">닫기</button>
   </div>
 </div>
 
@@ -355,6 +357,149 @@ const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const LS_THEME="hub-theme", LS_CFG="dday-cfg", LS_LOG="dday-log";
 const pad=n=>String(n).padStart(2,"0");
 function toast(m){ const t=$("#toast"); t.textContent=m; t.classList.add("show"); clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove("show"),1900); }
+
+/* ════════ 다국어 (한국어 / English) ════════ */
+const LS_LANG="dday-lang";
+let L=(localStorage.getItem(LS_LANG)==="en"||localStorage.getItem(LS_LANG)==="ko")
+  ? localStorage.getItem(LS_LANG)
+  : (navigator.language && navigator.language.toLowerCase().startsWith("ko") ? "ko" : "en");
+const T={
+  ko:{
+    moaTitle:"모아로 돌아가기", settingsTitle:"설정", themeTitle:"테마 전환",
+    heroSub:"출국 전에 병가를 다 쓰고, 출국~소집해제는 연가·특별휴가로 채우는 계획이에요.",
+    panelEarly:"조기전역 — 출국일 고정", panelSick:"병가 — 출국 전에 소진", panelSickTail:"행을 누르면 캘린더에 표시",
+    panelCover:"연가 · 특별휴가 — 출국 후 채우기", panelSvc:"복무 현황", panelSvcTail:"근무상황관리 기준",
+    panelLog:"사용 기록", addLogBtn:"＋ 사용 기록 추가", calToday:"오늘",
+    legEarly:"조기전역 휴가(연가·특별, 고정)", legSickRange:"병가 조퇴구간", legSickLog:"병가 기록",
+    legAnnual:"연가", legSpecial:"특별휴가", legHoliday:"주말·공휴일",
+    footerBrand:"디데이 · D-Day", footerMoa:"모아로 돌아가기",
+    footerNote:"모든 데이터는 이 브라우저에만 저장돼요(localStorage). 날짜·잔여·가정은 ⚙️에서 바꿀 수 있어요.",
+    setTitle:"설정", setSub:"날짜·잔여 휴가·가정을 입력하세요. 바꾸면 모든 계산과 캘린더가 즉시 갱신돼요.",
+    fStart:"소집일자(복무 시작)", fEnd:"소집해제 예정일", fDeparture:"출국일 ✈️ (조기전역 고정 기준)",
+    fHpd:"하루 복무시간(시간)", fSick:"병가 잔여(시간)", fAnnual:"연가 잔여(일)", fSpecial:"특별휴가 잔여(일)",
+    swSat:"토요일도 근무", swSun:"일요일도 근무", swInclEnd:"소집해제일도 휴가에 포함 <small style=\"color:var(--sub);font-weight:600\">(연가)</small>",
+    setNote:"※ <b>병가</b>는 출국 전 마지막 근무일까지 조퇴로 소진, <b>연가·특별휴가</b>는 출국일~소집해제일을 채우는 데 쓰는 것으로 계산해요. (서로 분리)<br>※ 잔여는 <b>오늘 기준</b> 값. \"사용 기록\"에 추가하면 잔여에서 <b>자동 차감</b>됩니다.",
+    saveBtn:"저장", resetBtn:"기본값으로 초기화 (기록 유지)", closeBtn:"닫기",
+    logSheetSub:"실제로 쓴 병가·연가·특별휴가를 기록하면 잔여에서 차감되고 캘린더에 표시돼요.",
+    lDate:"날짜", lType:"종류", lTypeSick:"병가(시간)", lTypeAnnual:"연가(일)", lTypeSpecial:"특별휴가(일)",
+    lHoursPh:"예: 2", lSaveBtn:"기록 저장",
+    logTitleAdd:"사용 기록 추가", amtLabelHours:"사용 시간(시간)", amtLabelDays:"사용 일수(일)", dayLogsHead:"이 날 기록",
+    delTitle:"삭제",
+    /* 단위 */ unitDays:"일", unitHours:"시간", unitWorkDays:"근무일", unitCount:"건",
+    /* 통계 카드 */
+    statDepLbl:"✈️ 호주 출국 (조기전역)", statLastWorkLbl:"🎉 실질 마지막 근무일", statLastWorkSub:"이후 소집해제까지 휴가",
+    statEndLbl:"📅 소집해제(공식)", statProgress:"진행률", statWorkLeftLbl:"🧳 앞으로 출근", statWorkLeftSub:"오늘~마지막 근무일(주말·공휴일 제외)",
+    /* 조기전역 */
+    kLastWork:"실질 마지막 근무일", kLastWorkNote:"이 날까지만 출근", kLeaveRange:"조기전역 휴가구간 (완전 고정)",
+    kLeaveUsed:"사용 휴가", kDeparture:"✈️ 호주 출국",
+    /* 병가/연가 잔여카드 */
+    balSick:"병가 잔여", balAnnual:"연가 잔여", balSpecial:"특별휴가", balAfterDep:"출국 후 사용",
+    thHow:"병가 쓰는 법", thSpan:"가능 기간", thStart:"시작일",
+    /* 연가·특별 패널 */
+    coverSpcRemain:"특별휴가 잔여", coverTotal:"합계 → 전부 조기전역에 사용", coverRange:"휴가구간 (완전 고정)",
+    /* 복무현황 */
+    svcName:"성명 · 의무복무", svcAnnual:"연가", svcSick:"병가", svcSpecial:"특별휴가 · 공가",
+    svcUsed:"사용", svcBase:"기준", svcRemain:"잔여", svcY1:"1차", svcY2:"2차", svcGong:"공가",
+    svcNormal:"정상출근", svcUnauth:"무단(조퇴/지각/외출/결근)", svcMilEdu:"군사교육", svcJobEdu:"직무·기본교육",
+    /* 캘린더 필터·태그 */
+    filterLeave:"출국~소집해제", filterFullDay:"하루전체",
+    tagStart:"복무시작", tagDischarge:"소집해제", tagDeparture:"출국", tagAnnual:"연가", tagSpecial:"특별휴가",
+    tagSpecialShort:"특별", tagEarlyLeave:"조퇴", tagSick:"병가",
+    /* 기록 */
+    typeSick:"병가", typeAnnual:"연가", typeSpecial:"특별휴가",
+    logEmpty:"아직 기록이 없어요. 캘린더 날짜를 누르거나 아래 버튼으로 추가하세요.",
+    /* 토스트·확인 */
+    toastEndAfterStart:"소집해제일이 시작일보다 뒤여야 해요", toastDepBetween:"출국일은 시작~해제일 사이여야 해요",
+    toastSaved:"저장했어요 ✓", confirmReset:"설정을 기본값으로 되돌릴까요? (사용 기록은 유지)", toastReset:"기본값으로 초기화했어요",
+    toastDeleted:"기록을 삭제했어요", toastDeleted2:"삭제했어요", toastPickDate:"날짜를 선택하세요",
+    toastEnterAmt:"사용량을 입력하세요", toastLogAdded:"기록 추가 ✓"
+  },
+  en:{
+    moaTitle:"Back to moa", settingsTitle:"Settings", themeTitle:"Toggle theme",
+    heroSub:"The plan: use up all sick leave before departure, then cover departure→discharge with annual and special leave.",
+    panelEarly:"Early discharge — departure fixed", panelSick:"Sick leave — used up before departure", panelSickTail:"Tap a row to show on calendar",
+    panelCover:"Annual · Special leave — fill after departure", panelSvc:"Service status", panelSvcTail:"per service-status record",
+    panelLog:"Usage log", addLogBtn:"＋ Add log entry", calToday:"Today",
+    legEarly:"Early-discharge leave (annual·special, fixed)", legSickRange:"Sick early-leave span", legSickLog:"Sick leave entry",
+    legAnnual:"Annual leave", legSpecial:"Special leave", legHoliday:"Weekend·holiday",
+    footerBrand:"D-Day", footerMoa:"Back to moa",
+    footerNote:"All data is stored only in this browser (localStorage). Change dates, balances and assumptions from ⚙️.",
+    setTitle:"Settings", setSub:"Enter dates, leave balances and assumptions. Changes update all calculations and the calendar instantly.",
+    fStart:"Enlistment date (service start)", fEnd:"Scheduled discharge date", fDeparture:"Departure date ✈️ (early-discharge anchor)",
+    fHpd:"Daily service hours (h)", fSick:"Sick leave balance (h)", fAnnual:"Annual leave balance (days)", fSpecial:"Special leave balance (days)",
+    swSat:"Work Saturdays too", swSun:"Work Sundays too", swInclEnd:"Include discharge day as leave <small style=\"color:var(--sub);font-weight:600\">(annual)</small>",
+    setNote:"※ <b>Sick leave</b> is used up via early-leave through the last work day before departure; <b>annual·special leave</b> fills departure→discharge. (kept separate)<br>※ Balances are <b>as of today</b>. Adding to \"Usage log\" <b>deducts automatically</b>.",
+    saveBtn:"Save", resetBtn:"Reset to defaults (keep log)", closeBtn:"Close",
+    logSheetSub:"Logging the sick·annual·special leave you actually used deducts it from your balance and shows it on the calendar.",
+    lDate:"Date", lType:"Type", lTypeSick:"Sick (h)", lTypeAnnual:"Annual (days)", lTypeSpecial:"Special (days)",
+    lHoursPh:"e.g. 2", lSaveBtn:"Save entry",
+    logTitleAdd:"Add log entry", amtLabelHours:"Hours used (h)", amtLabelDays:"Days used (days)", dayLogsHead:"Entries this day",
+    delTitle:"Delete",
+    /* units */ unitDays:"d", unitHours:"h", unitWorkDays:" work days", unitCount:"",
+    /* stat cards */
+    statDepLbl:"✈️ Australia departure (early discharge)", statLastWorkLbl:"🎉 Real last work day", statLastWorkSub:"leave from then until discharge",
+    statEndLbl:"📅 Discharge (official)", statProgress:"progress", statWorkLeftLbl:"🧳 Work days left", statWorkLeftSub:"today→last work day (excl. weekends·holidays)",
+    /* early discharge */
+    kLastWork:"Real last work day", kLastWorkNote:"work only until this day", kLeaveRange:"Early-discharge leave window (fully fixed)",
+    kLeaveUsed:"Leave used", kDeparture:"✈️ Australia departure",
+    /* balance cards */
+    balSick:"Sick balance", balAnnual:"Annual balance", balSpecial:"Special leave", balAfterDep:"used after departure",
+    thHow:"How to use sick leave", thSpan:"Possible span", thStart:"Start date",
+    /* annual·special panel */
+    coverSpcRemain:"Special leave balance", coverTotal:"Total → all for early discharge", coverRange:"Leave window (fully fixed)",
+    /* service status */
+    svcName:"Name · service term", svcAnnual:"Annual", svcSick:"Sick", svcSpecial:"Special · official leave",
+    svcUsed:"used", svcBase:"base", svcRemain:"left", svcY1:"Y1", svcY2:"Y2", svcGong:"official",
+    svcNormal:"Normal attendance", svcUnauth:"Unauthorized (early/late/out/absent)", svcMilEdu:"Military training", svcJobEdu:"Job·basic training",
+    /* calendar filters·tags */
+    filterLeave:"Departure~Discharge", filterFullDay:"Full day",
+    tagStart:"Start", tagDischarge:"Discharge", tagDeparture:"Departure", tagAnnual:"Annual", tagSpecial:"Special leave",
+    tagSpecialShort:"Special", tagEarlyLeave:"Early-leave ", tagSick:"Sick",
+    /* log */
+    typeSick:"Sick", typeAnnual:"Annual", typeSpecial:"Special leave",
+    logEmpty:"No entries yet. Tap a calendar date or use the button below to add one.",
+    /* toasts·confirm */
+    toastEndAfterStart:"Discharge date must be after the start date", toastDepBetween:"Departure must be between start and discharge",
+    toastSaved:"Saved ✓", confirmReset:"Reset settings to defaults? (usage log is kept)", toastReset:"Reset to defaults",
+    toastDeleted:"Entry deleted", toastDeleted2:"Deleted", toastPickDate:"Please pick a date",
+    toastEnterAmt:"Please enter an amount", toastLogAdded:"Entry added ✓"
+  }
+};
+const tr=k=>(T[L]&&T[L][k]!=null)?T[L][k]:(T.ko[k]!=null?T.ko[k]:k);
+
+/* 공휴일 이름 한↔영 */
+const HOL_TR={
+  "신정":"New Year","임시공휴일":"Temp. holiday","설날":"Seollal","삼일절":"March 1st","대체공휴일":"Substitute holiday",
+  "어린이날·석탄":"Children's·Buddha","어린이날":"Children's Day","석가탄신":"Buddha's Birthday","현충일":"Memorial Day",
+  "광복절":"Liberation Day","개천절":"Foundation Day","추석":"Chuseok","한글날":"Hangeul Day","성탄절":"Christmas"
+};
+function holName(h){ return !h ? "" : (L==="ko" ? h : (HOL_TR[h]||h)); }
+
+function applyStaticLang(){
+  document.querySelectorAll("[data-i18n]").forEach(el=>{ el.innerHTML=tr(el.dataset.i18n); });
+  document.querySelectorAll("[data-i18n-title]").forEach(el=>{ el.title=tr(el.dataset.i18nTitle); });
+  document.querySelectorAll("[data-i18n-ph]").forEach(el=>{ el.placeholder=tr(el.dataset.i18nPh); });
+  document.querySelectorAll("[data-i18n-aria]").forEach(el=>{ el.setAttribute("aria-label", tr(el.dataset.i18nAria)); });
+}
+function applyLang(lang){
+  L=(lang==="en")?"en":"ko";
+  try{ localStorage.setItem(LS_LANG,L); }catch(e){}
+  document.documentElement.lang=L;
+  applyStaticLang();
+  $$(".lang-btn").forEach(b=> b.textContent=(L==="en")?"한":"EN");
+  if(typeof renderAll==="function") renderAll();
+  if(typeof refreshSheetTexts==="function") refreshSheetTexts();
+}
+$$(".lang-btn").forEach(b=> b.addEventListener("click",()=> applyLang(L==="en"?"ko":"en")));
+
+/* 시트 안의 JS-갱신 텍스트(라벨/제목)를 현재 언어로 다시 칠함 */
+function refreshSheetTexts(){
+  const amt=$("#l-amt-label"); if(amt) amt.textContent = logType==="sick"?tr("amtLabelHours"):tr("amtLabelDays");
+  const lt=$("#log-title");
+  if(lt){ lt.textContent = (logDate && $("#log-wrap") && !$("#log-wrap").classList.contains("hidden"))
+    ? (L==="ko"?`${logDate.slice(5).replace("-",".")} 사용 기록`:`${logDate.slice(5).replace("-",".")} log`) : tr("logTitleAdd"); }
+  renderDayLogs();
+}
 
 /* ════════ 테마 ════════ */
 function setTheme(t){
@@ -406,8 +551,11 @@ function isHol(d){ return !!HOL[iso(d)]; }
 function isOff(d){ return isWeekend(d)||isHol(d); }
 function isWork(d){ return !isOff(d); }
 function dday(d){ return Math.round((parse(iso(d))-today0())/86400000); }
-const WD=["일","월","화","수","목","금","토"];
-function fmtDate(d){ return (d.getMonth()+1)+"월 "+d.getDate()+"일("+WD[d.getDay()]+")"; }
+const WD_KO=["일","월","화","수","목","금","토"];
+const WD_EN=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+const WD_FN=()=> (L==="ko"?WD_KO:WD_EN);
+function fmtDate(d){ return L==="ko" ? (d.getMonth()+1)+"월 "+d.getDate()+"일("+WD_KO[d.getDay()]+")"
+                                     : (d.getMonth()+1)+"/"+d.getDate()+" ("+WD_EN[d.getDay()]+")"; }
 function dot(s){ return iso(s).replace(/-/g,"."); }
 function workBack(end, n){ let d=new Date(end), c=0, g=0; while(c<n && g<6000){ d=addDays(d,-1); g++; if(isWork(d)) c++; } return d; }
 function workCount(a,bEx){ let d=new Date(a),c=0,g=0; while(d<bEx && g<30000){ if(isWork(d))c++; d=addDays(d,1); g++; } return c; }
@@ -417,8 +565,8 @@ function sum(type){ return log.filter(x=>x.type===type).reduce((s,x)=>s+(+x.hour
 function sickRemain(){ return Math.max(0, cfg.sick - sum("sick")); }               // 시간
 function annRemain(){ return Math.max(0, cfg.annual - sum("annual")/cfg.hpd); }     // 일
 function spcRemain(){ return Math.max(0, cfg.special - sum("special")/cfg.hpd); }   // 일
-function fmtH(h){ const hpd=cfg.hpd, d=Math.floor(h/hpd+1e-9), r=Math.round((h-d*hpd)*100)/100; let s=""; if(d) s+=d+"일"; if(r>0||!d) s+=(s?" ":"")+r+"시간"; return s||"0시간"; }
-function fmtDays(x){ return (Math.round(x*100)/100)+"일"; }
+function fmtH(h){ const hpd=cfg.hpd, d=Math.floor(h/hpd+1e-9), r=Math.round((h-d*hpd)*100)/100; let s=""; if(d) s+=d+tr("unitDays"); if(r>0||!d) s+=(s?" ":"")+r+tr("unitHours"); return s||("0"+tr("unitHours")); }
+function fmtDays(x){ return (Math.round(x*100)/100)+tr("unitDays"); }
 
 /* 조기전역 휴가블록 = 연가+특별휴가(전부)를 소집해제 직전에 고정 배치 */
 function blockInfo(){
@@ -461,81 +609,96 @@ function renderStats(){
   const total=Math.max(1,(end-start)/86400000), done=Math.min(total,Math.max(0,(t-start)/86400000));
   const pct=Math.round(done/total*100);
   const workLeft=workCount(t<start?start:t, addDays(lw,1));
-  $("#hero-greet").textContent = ddDep>0 ? `호주 출국까지 D-${ddDep}` : (ddDep===0?"오늘 출국! ✈️":"출국 완료");
+  $("#hero-greet").textContent = ddDep>0 ? (L==="ko"?`호주 출국까지 D-${ddDep}`:`D-${ddDep} to Australia`) : (ddDep===0?(L==="ko"?"오늘 출국! ✈️":"Departure today! ✈️"):(L==="ko"?"출국 완료":"Departed"));
   $("#stat-grid").innerHTML = `
-    <div class="stat hl"><div class="s-lbl">✈️ 호주 출국 (조기전역)</div><div class="s-big">${ddDep>=0?`D-${ddDep}`:`D+${-ddDep}`}</div><div class="s-sub">${dot(dep)} · ${fmtDate(dep)}</div></div>
-    <div class="stat"><div class="s-lbl">🎉 실질 마지막 근무일</div><div class="s-big">${ddLw>=0?`D-${ddLw}`:`D+${-ddLw}`}</div><div class="s-sub">${fmtDate(lw)}<br>이후 소집해제까지 휴가</div></div>
-    <div class="stat"><div class="s-lbl">📅 소집해제(공식)</div><div class="s-big">${ddEnd>=0?`D-${ddEnd}`:`D+${-ddEnd}`}</div><div class="s-sub">${dot(end)} · 진행률 ${pct}%</div><div class="prog"><i style="width:${pct}%"></i></div></div>
-    <div class="stat"><div class="s-lbl">🧳 앞으로 출근</div><div class="s-big">${workLeft}<small style="font-size:15px;font-weight:700"> 일</small></div><div class="s-sub">오늘~마지막 근무일(주말·공휴일 제외)</div></div>`;
+    <div class="stat hl"><div class="s-lbl">${tr("statDepLbl")}</div><div class="s-big">${ddDep>=0?`D-${ddDep}`:`D+${-ddDep}`}</div><div class="s-sub">${dot(dep)} · ${fmtDate(dep)}</div></div>
+    <div class="stat"><div class="s-lbl">${tr("statLastWorkLbl")}</div><div class="s-big">${ddLw>=0?`D-${ddLw}`:`D+${-ddLw}`}</div><div class="s-sub">${fmtDate(lw)}<br>${tr("statLastWorkSub")}</div></div>
+    <div class="stat"><div class="s-lbl">${tr("statEndLbl")}</div><div class="s-big">${ddEnd>=0?`D-${ddEnd}`:`D+${-ddEnd}`}</div><div class="s-sub">${dot(end)} · ${tr("statProgress")} ${pct}%</div><div class="prog"><i style="width:${pct}%"></i></div></div>
+    <div class="stat"><div class="s-lbl">${tr("statWorkLeftLbl")}</div><div class="s-big">${workLeft}<small style="font-size:15px;font-weight:700"> ${tr("unitDays")}</small></div><div class="s-sub">${tr("statWorkLeftSub")}</div></div>`;
 }
 
 function renderEarly(){
   const bi=blockInfo(), end=parse(cfg.end), dep=parse(cfg.departure);
   const depInBlock = parse(cfg.departure) >= parse(iso(bi.firstLeave));
   const freeBefore = depInBlock ? workCount(parse(iso(bi.firstLeave)), parse(cfg.departure)) : 0;
-  $("#early-tail").textContent = `연가+특별 ${fmtDays(bi.total)} 고정`;
+  $("#early-tail").textContent = L==="ko" ? `연가+특별 ${fmtDays(bi.total)} 고정` : `Annual+Special ${fmtDays(bi.total)} fixed`;
   $("#early-body").innerHTML = `
-    <div class="kv"><span class="k">실질 마지막 근무일</span><span class="v"><span class="big-date">${fmtDate(bi.lastWork)}</span><br><small>${dot(bi.lastWork)} · D-${dday(bi.lastWork)} · 이 날까지만 출근</small></span></div>
-    <div class="kv"><span class="k">조기전역 휴가구간 (완전 고정)</span><span class="v">${fmtDate(bi.firstLeave)} ~ ${fmtDate(end)}<br><small>${dot(bi.firstLeave)} ~ ${dot(end)} · ${bi.n}근무일</small></span></div>
-    <div class="kv"><span class="k">사용 휴가</span><span class="v">연가 ${fmtDays(bi.ann)} + 특별 ${fmtDays(bi.spc)} = ${fmtDays(bi.total)}</span></div>
-    <div class="kv"><span class="k">✈️ 호주 출국</span><span class="v">${fmtDate(dep)} <small>(D-${dday(dep)})</small></span></div>
+    <div class="kv"><span class="k">${tr("kLastWork")}</span><span class="v"><span class="big-date">${fmtDate(bi.lastWork)}</span><br><small>${dot(bi.lastWork)} · D-${dday(bi.lastWork)} · ${tr("kLastWorkNote")}</small></span></div>
+    <div class="kv"><span class="k">${tr("kLeaveRange")}</span><span class="v">${fmtDate(bi.firstLeave)} ~ ${fmtDate(end)}<br><small>${dot(bi.firstLeave)} ~ ${dot(end)} · ${bi.n}${tr("unitWorkDays")}</small></span></div>
+    <div class="kv"><span class="k">${tr("kLeaveUsed")}</span><span class="v">${L==="ko"?`연가 ${fmtDays(bi.ann)} + 특별 ${fmtDays(bi.spc)} = ${fmtDays(bi.total)}`:`Annual ${fmtDays(bi.ann)} + Special ${fmtDays(bi.spc)} = ${fmtDays(bi.total)}`}</span></div>
+    <div class="kv"><span class="k">${tr("kDeparture")}</span><span class="v">${fmtDate(dep)} <small>(D-${dday(dep)})</small></span></div>
     <div class="note ${depInBlock?"":"warn"}">${depInBlock
-      ? `연가(${fmtDays(bi.ann)})·특별휴가(${fmtDays(bi.spc)})를 <b>전부 막판에 몰아</b> 써서 <b>${fmtDate(bi.firstLeave)}부터</b> 출근 안 하고 소집해제일(${dot(end)})까지 휴가로 채워요(소집해제일도 <b>연가</b>로 포함). 출국일 <b>${fmtDate(dep)}</b>은 이 휴가구간 안이라 안전합니다(출국보다 <b>${freeBefore}근무일</b> 더 일찍 자유). 캘린더에 날짜별로 <b>연가/특별휴가</b>가 완전히 표기돼요.`
-      : `⚠️ 휴가구간 시작(${fmtDate(bi.firstLeave)})이 출국일(${fmtDate(dep)})보다 늦어요. 연가+특별휴가가 부족해 출국 후~휴가시작 사이를 못 덮습니다. 잔여를 확인하세요.`}</div>`;
+      ? (L==="ko"
+        ? `연가(${fmtDays(bi.ann)})·특별휴가(${fmtDays(bi.spc)})를 <b>전부 막판에 몰아</b> 써서 <b>${fmtDate(bi.firstLeave)}부터</b> 출근 안 하고 소집해제일(${dot(end)})까지 휴가로 채워요(소집해제일도 <b>연가</b>로 포함). 출국일 <b>${fmtDate(dep)}</b>은 이 휴가구간 안이라 안전합니다(출국보다 <b>${freeBefore}근무일</b> 더 일찍 자유). 캘린더에 날짜별로 <b>연가/특별휴가</b>가 완전히 표기돼요.`
+        : `Use all of your annual (${fmtDays(bi.ann)}) and special leave (${fmtDays(bi.spc)}) <b>back-to-back at the very end</b> — stop coming in <b>from ${fmtDate(bi.firstLeave)}</b> and fill through to your discharge date (${dot(end)}) with leave (the discharge day counts as <b>annual leave</b>). Your departure <b>${fmtDate(dep)}</b> falls inside this leave window, so you're safe (free <b>${freeBefore} work days</b> earlier than departure). The calendar marks every day as <b>annual/special leave</b>.`)
+      : (L==="ko"
+        ? `⚠️ 휴가구간 시작(${fmtDate(bi.firstLeave)})이 출국일(${fmtDate(dep)})보다 늦어요. 연가+특별휴가가 부족해 출국 후~휴가시작 사이를 못 덮습니다. 잔여를 확인하세요.`
+        : `⚠️ The leave window starts (${fmtDate(bi.firstLeave)}) later than your departure (${fmtDate(dep)}). Annual + special leave is short, so the gap between departure and the leave start isn't covered. Check your balances.`)}</div>`;
 }
 
 function renderSick(){
   const scs=scenarios(), pick=scs.find(s=>s.r===3)||scs[0];
   const bal = `<div class="bal-grid">
-    <div class="bal sick"><div class="b-lbl">병가 잔여</div><div class="b-v">${fmtH(sickRemain())}</div><div class="b-sub">${sickRemain()}시간</div></div>
-    <div class="bal annual"><div class="b-lbl">연가 잔여</div><div class="b-v">${fmtDays(annRemain())}</div><div class="b-sub">출국 후 사용</div></div>
-    <div class="bal special"><div class="b-lbl">특별휴가</div><div class="b-v">${fmtDays(spcRemain())}</div><div class="b-sub">출국 후 사용</div></div></div>`;
+    <div class="bal sick"><div class="b-lbl">${tr("balSick")}</div><div class="b-v">${fmtH(sickRemain())}</div><div class="b-sub">${sickRemain()}${tr("unitHours")}</div></div>
+    <div class="bal annual"><div class="b-lbl">${tr("balAnnual")}</div><div class="b-v">${fmtDays(annRemain())}</div><div class="b-sub">${tr("balAfterDep")}</div></div>
+    <div class="bal special"><div class="b-lbl">${tr("balSpecial")}</div><div class="b-v">${fmtDays(spcRemain())}</div><div class="b-sub">${tr("balAfterDep")}</div></div></div>`;
   $("#sick-body").innerHTML = bal + `
-    <div class="note" style="margin-bottom:6px;">병가 <b>${fmtH(sickRemain())}</b>를 <b>하루 3시간씩</b> 조퇴로 쓰면 <b>${pick.start?fmtDate(pick.start):"-"}부터</b> 시작해서 마지막 근무일(${fmtDate(lastWorkDay())})까지 다 소진돼요. (아래에서 하루 시간 바꿔 비교)</div>
+    <div class="note" style="margin-bottom:6px;">${L==="ko"
+      ? `병가 <b>${fmtH(sickRemain())}</b>를 <b>하루 3시간씩</b> 조퇴로 쓰면 <b>${pick.start?fmtDate(pick.start):"-"}부터</b> 시작해서 마지막 근무일(${fmtDate(lastWorkDay())})까지 다 소진돼요. (아래에서 하루 시간 바꿔 비교)`
+      : `Taking sick leave of <b>${fmtH(sickRemain())}</b> as <b>3 hours/day</b> early-leave runs <b>from ${pick.start?fmtDate(pick.start):"-"}</b> through your last work day (${fmtDate(lastWorkDay())}), using it all. (Compare daily hours below.)`}</div>
     <table class="sc-table">
-      <thead><tr><th>병가 쓰는 법</th><th>가능 기간</th><th>시작일</th></tr></thead>
+      <thead><tr><th>${tr("thHow")}</th><th>${tr("thSpan")}</th><th>${tr("thStart")}</th></tr></thead>
       <tbody>${scs.map(s=>`
         <tr data-rate="${s.r}" class="${activeScenario===s.r?"on":""}">
-          <td class="num"><span class="rt"><span class="dot" style="background:${scColor(s.r)}"></span>${s.full?`하루 전체(${s.r}h)`:`하루 ${s.r}시간`}</span></td>
-          <td class="num">${s.whole}일${s.rem>0?` <small style="color:var(--sub);font-weight:600">+${s.rem}시간</small>`:""}</td>
+          <td class="num"><span class="rt"><span class="dot" style="background:${scColor(s.r)}"></span>${s.full?(L==="ko"?`하루 전체(${s.r}h)`:`Full day (${s.r}h)`):(L==="ko"?`하루 ${s.r}시간`:`${s.r}h/day`)}</span></td>
+          <td class="num">${s.whole}${tr("unitDays")}${s.rem>0?` <small style="color:var(--sub);font-weight:600">+${s.rem}${tr("unitHours")}</small>`:""}</td>
           <td>${s.start?fmtDate(s.start):"-"}</td>
         </tr>`).join("")}</tbody>
     </table>
-    <div class="note">하루에 적게 나눠 쓸수록(조퇴) 더 여러 날에 걸쳐 쉴 수 있어요. <b>하루 전체</b>는 그날 아예 안 나가는 경우. 모두 <b>마지막 근무일(${fmtDate(lastWorkDay())})</b>에 끝나도록 거꾸로 계산했어요(연가·특별휴가 구간과 안 겹침). 행을 누르면 캘린더에 구간 표시.</div>`;
+    <div class="note">${L==="ko"
+      ? `하루에 적게 나눠 쓸수록(조퇴) 더 여러 날에 걸쳐 쉴 수 있어요. <b>하루 전체</b>는 그날 아예 안 나가는 경우. 모두 <b>마지막 근무일(${fmtDate(lastWorkDay())})</b>에 끝나도록 거꾸로 계산했어요(연가·특별휴가 구간과 안 겹침). 행을 누르면 캘린더에 구간 표시.`
+      : `Splitting it into fewer hours/day (early leave) spreads it over more days. <b>Full day</b> means skipping the day entirely. All are computed backward so they end on your <b>last work day (${fmtDate(lastWorkDay())})</b> (no overlap with the annual/special leave window). Tap a row to show the span on the calendar.`}</div>`;
   $$("#sick-body tr[data-rate]").forEach(tr=>tr.onclick=()=>{ const r=+tr.dataset.rate; activeScenario=activeScenario===r?null:r; renderSick(); renderFilter(); renderCalendar(); });
 }
 
 function renderCover(){
   const bi=blockInfo(), end=parse(cfg.end);
   $("#cover-body").innerHTML = `
-    <div class="kv"><span class="k">연가 잔여</span><span class="v">${fmtDays(bi.ann)} <small>(기준28·사용22)</small></span></div>
-    <div class="kv"><span class="k">특별휴가 잔여</span><span class="v">${fmtDays(bi.spc)} <small>(기준20·사용11)</small></span></div>
-    <div class="kv"><span class="k">합계 → 전부 조기전역에 사용</span><span class="v">${fmtDays(bi.total)} = ${bi.n}근무일</span></div>
-    <div class="kv"><span class="k">휴가구간 (완전 고정)</span><span class="v">${fmtDate(bi.firstLeave)} ~ ${fmtDate(end)}</span></div>
-    <div class="note">결정대로 연가·특별휴가는 다른 데 쓰지 않고 <b>전부 조기전역(막판 몰아쓰기)</b>에만 써요. 캘린더에 <b>연가</b>(파랑)·<b>특별휴가</b>(보라)로 날짜마다 완전히 표기됩니다. 병가는 이와 분리되어 그 전에 조퇴로 소진해요.</div>`;
+    <div class="kv"><span class="k">${tr("balAnnual")}</span><span class="v">${fmtDays(bi.ann)} <small>${L==="ko"?"(기준28·사용22)":"(base 28 · used 22)"}</small></span></div>
+    <div class="kv"><span class="k">${tr("coverSpcRemain")}</span><span class="v">${fmtDays(bi.spc)} <small>${L==="ko"?"(기준20·사용11)":"(base 20 · used 11)"}</small></span></div>
+    <div class="kv"><span class="k">${tr("coverTotal")}</span><span class="v">${fmtDays(bi.total)} = ${bi.n}${tr("unitWorkDays")}</span></div>
+    <div class="kv"><span class="k">${tr("coverRange")}</span><span class="v">${fmtDate(bi.firstLeave)} ~ ${fmtDate(end)}</span></div>
+    <div class="note">${L==="ko"
+      ? `결정대로 연가·특별휴가는 다른 데 쓰지 않고 <b>전부 조기전역(막판 몰아쓰기)</b>에만 써요. 캘린더에 <b>연가</b>(파랑)·<b>특별휴가</b>(보라)로 날짜마다 완전히 표기됩니다. 병가는 이와 분리되어 그 전에 조퇴로 소진해요.`
+      : `As planned, annual and special leave aren't used for anything else — they all go toward <b>early discharge (saved for the very end)</b>. The calendar marks every day as <b>annual</b> (blue) or <b>special leave</b> (purple). Sick leave is separate and used up earlier via early-leave.`}</div>`;
 }
 
 function renderSvc(){
   const annRem=SVC.annualBase-SVC.annualUsed;
+  const u=tr("unitDays");
+  const sickUsedTxt = L==="ko" ? "20일 6시간" : "20d 6h";
+  const sickRemTxt  = L==="ko" ? "9일 2시간"  : "9d 2h";
   $("#svc-body").innerHTML = `
-    <div class="kv"><span class="k">성명 · 의무복무</span><span class="v">${SVC.name} · ${SVC.dutyDays}일 <small>(연장 ${SVC.extend}·감소 ${SVC.reduce})</small></span></div>
-    <div class="kv"><span class="k">연가</span><span class="v">사용 ${SVC.annualUsed}일 / 기준 ${SVC.annualBase}일 · <span style="color:var(--accent)">잔여 ${annRem}일</span><br><small>1차 ${SVC.y1} · 2차 ${SVC.y2}</small></span></div>
-    <div class="kv"><span class="k">병가</span><span class="v">사용 ${SVC.sickUsed} / 기준 ${SVC.sickBase}일 · <span style="color:var(--red)">잔여 9일 2시간</span></span></div>
-    <div class="kv"><span class="k">특별휴가 · 공가</span><span class="v">사용 ${SVC.specialUsed}일 / 기준 ${SVC.specialBase}일 · <span style="color:var(--purple)">잔여 ${fmtDays(spcRemain())}</span> · 공가 ${SVC.gong}일</span></div>
+    <div class="kv"><span class="k">${tr("svcName")}</span><span class="v">${SVC.name} · ${SVC.dutyDays}${u} <small>${L==="ko"?`(연장 ${SVC.extend}·감소 ${SVC.reduce})`:`(ext ${SVC.extend} · cut ${SVC.reduce})`}</small></span></div>
+    <div class="kv"><span class="k">${tr("svcAnnual")}</span><span class="v">${tr("svcUsed")} ${SVC.annualUsed}${u} / ${tr("svcBase")} ${SVC.annualBase}${u} · <span style="color:var(--accent)">${tr("svcRemain")} ${annRem}${u}</span><br><small>${tr("svcY1")} ${SVC.y1} · ${tr("svcY2")} ${SVC.y2}</small></span></div>
+    <div class="kv"><span class="k">${tr("svcSick")}</span><span class="v">${tr("svcUsed")} ${sickUsedTxt} / ${tr("svcBase")} ${SVC.sickBase}${u} · <span style="color:var(--red)">${tr("svcRemain")} ${sickRemTxt}</span></span></div>
+    <div class="kv"><span class="k">${tr("svcSpecial")}</span><span class="v">${tr("svcUsed")} ${SVC.specialUsed}${u} / ${tr("svcBase")} ${SVC.specialBase}${u} · <span style="color:var(--purple)">${tr("svcRemain")} ${fmtDays(spcRemain())}</span> · ${tr("svcGong")} ${SVC.gong}${u}</span></div>
     <div class="svc-grid" style="margin-top:10px;">
-      <div class="svc-cell"><div class="c-k">정상출근</div><div class="c-v">${SVC.normal}건</div></div>
-      <div class="svc-cell"><div class="c-k">무단(조퇴/지각/외출/결근)</div><div class="c-v">0건 <small>✓</small></div></div>
-      <div class="svc-cell"><div class="c-k">군사교육</div><div class="c-v">${SVC.military}건</div></div>
-      <div class="svc-cell"><div class="c-k">직무·기본교육</div><div class="c-v">${SVC.jobEdu} · ${SVC.baseEdu}건</div></div>
+      <div class="svc-cell"><div class="c-k">${tr("svcNormal")}</div><div class="c-v">${SVC.normal}${tr("unitCount")}</div></div>
+      <div class="svc-cell"><div class="c-k">${tr("svcUnauth")}</div><div class="c-v">0${tr("unitCount")} <small>✓</small></div></div>
+      <div class="svc-cell"><div class="c-k">${tr("svcMilEdu")}</div><div class="c-v">${SVC.military}${tr("unitCount")}</div></div>
+      <div class="svc-cell"><div class="c-k">${tr("svcJobEdu")}</div><div class="c-v">${SVC.jobEdu} · ${SVC.baseEdu}${tr("unitCount")}</div></div>
     </div>
-    <div class="note">근무상황관리 화면(2025-01-07 ~ 2026-10-23 조회) 기준. 잔여(병가 9일2시간·연가 ${SVC.annualBase-SVC.annualUsed}일·특별 ${fmtDays(spcRemain())})는 위 계획에 그대로 반영돼요.</div>`;
+    <div class="note">${L==="ko"
+      ? `근무상황관리 화면(2025-01-07 ~ 2026-10-23 조회) 기준. 잔여(병가 9일2시간·연가 ${SVC.annualBase-SVC.annualUsed}일·특별 ${fmtDays(spcRemain())})는 위 계획에 그대로 반영돼요.`
+      : `Based on the service-status screen (queried 2025-01-07 ~ 2026-10-23). Balances (sick 9d 2h · annual ${SVC.annualBase-SVC.annualUsed}d · special ${fmtDays(spcRemain())}) are reflected in the plan above.`}</div>`;
 }
 
 function renderFilter(){
   const scs=scenarios();
   $("#cal-filter").innerHTML =
-    `<button class="chip ${showLeave?"on":""}" data-f="leave">✈️ 출국~소집해제</button>` +
-    scs.map(s=>`<button class="chip ${activeScenario===s.r?"on":""}" data-f="sc-${s.r}">🩹 ${s.full?`하루전체`:`병가 ${s.r}h`}</button>`).join("");
+    `<button class="chip ${showLeave?"on":""}" data-f="leave">✈️ ${tr("filterLeave")}</button>` +
+    scs.map(s=>`<button class="chip ${activeScenario===s.r?"on":""}" data-f="sc-${s.r}">🩹 ${s.full?tr("filterFullDay"):(L==="ko"?`병가 ${s.r}h`:`Sick ${s.r}h`)}</button>`).join("");
   $$("#cal-filter .chip").forEach(c=>c.onclick=()=>{
     const f=c.dataset.f;
     if(f==="leave"){ showLeave=!showLeave; } else { const r=+f.split("-")[1]; activeScenario=activeScenario===r?null:r; }
@@ -552,7 +715,7 @@ function renderCalendar(){
   const labels=blockLabels();
   const byDate={}; log.forEach(x=>{ (byDate[x.date]=byDate[x.date]||[]).push(x); });
   let html="";
-  WD.forEach((w,i)=> html+=`<div class="cal-dow ${i===0?"sun":i===6?"sat":""}">${w}</div>`);
+  WD_FN().forEach((w,i)=> html+=`<div class="cal-dow ${i===0?"sun":i===6?"sat":""}">${w}</div>`);
   for(let i=0;i<startDow;i++) html+=`<div class="cal-cell empty"></div>`;
   for(let dnum=1; dnum<=days; dnum++){
     const d=new Date(viewY,viewM,dnum), is=iso(d), w=d.getDay();
@@ -563,32 +726,34 @@ function renderCalendar(){
     if(scSet.has(is)) cls.push("sc");
     if(is===tIso) cls.push("today");
     let tags="";
-    if(is===startIso) tags+=`<span class="cal-tag annual">복무시작</span>`;
-    if(is===endIso) tags+=`<span class="cal-tag lv">소집해제</span>`;
-    if(is===depIso) tags+=`<span class="cal-tag dep">✈️출국</span>`;
-    if(lvSet.has(is) && isWork(d)){ const lt=labels[is]||"annual"; tags+=`<span class="cal-tag ${lt}">${lt==="annual"?"연가":"특별휴가"}</span>`; }
-    if(scSet.has(is)) tags+=`<span class="cal-tag scn">조퇴${activeScenario}h</span>`;
+    if(is===startIso) tags+=`<span class="cal-tag annual">${tr("tagStart")}</span>`;
+    if(is===endIso) tags+=`<span class="cal-tag lv">${tr("tagDischarge")}</span>`;
+    if(is===depIso) tags+=`<span class="cal-tag dep">✈️${tr("tagDeparture")}</span>`;
+    if(lvSet.has(is) && isWork(d)){ const lt=labels[is]||"annual"; tags+=`<span class="cal-tag ${lt}">${lt==="annual"?tr("tagAnnual"):tr("tagSpecial")}</span>`; }
+    if(scSet.has(is)) tags+=`<span class="cal-tag scn">${tr("tagEarlyLeave")}${activeScenario}h</span>`;
     (byDate[is]||[]).forEach(x=>{
-      const txt=x.type==="sick"?`병가 ${x.hours}h`:x.type==="annual"?`연가`:`특별`;
+      const txt=x.type==="sick"?`${tr("tagSick")} ${x.hours}h`:x.type==="annual"?tr("tagAnnual"):tr("tagSpecialShort");
       tags+=`<span class="cal-tag ${x.type}">${txt}</span>`;
     });
-    const hol=HOL[is];
+    const hol=holName(HOL[is]);
     html+=`<div class="${cls.join(" ")}" data-date="${is}"><div class="cal-d">${dnum}</div>${hol?`<div class="cal-hol">${hol}</div>`:""}${tags}</div>`;
   }
   $("#cal-grid").innerHTML=html;
   $$("#cal-grid .cal-cell:not(.empty)").forEach(c=>c.onclick=()=>openLog(c.dataset.date));
 }
 
+function typeName(t){ return t==="sick"?tr("typeSick"):t==="annual"?tr("typeAnnual"):tr("typeSpecial"); }
+function amtText(x){ return x.type==="sick"?`${x.hours}${tr("unitHours")}`:`${Math.round(x.hours/cfg.hpd*100)/100}${tr("unitDays")}`; }
 function renderLog(){
-  $("#log-tail").textContent=`병가 잔여 ${fmtH(sickRemain())}`;
-  if(!log.length){ $("#log-list").innerHTML=`<div class="log-empty">아직 기록이 없어요. 캘린더 날짜를 누르거나 아래 버튼으로 추가하세요.</div>`; return; }
+  $("#log-tail").textContent=`${tr("balSick")} ${fmtH(sickRemain())}`;
+  if(!log.length){ $("#log-list").innerHTML=`<div class="log-empty">${tr("logEmpty")}</div>`; return; }
   const sorted=[...log].sort((a,b)=> a.date<b.date?1:-1);
   $("#log-list").innerHTML = sorted.map(x=>{
-    const tn=x.type==="sick"?"병가":x.type==="annual"?"연가":"특별휴가";
-    const amt=x.type==="sick"?`${x.hours}시간`:`${Math.round(x.hours/cfg.hpd*100)/100}일`;
-    return `<div class="log-item"><span class="li-date">${x.date.slice(5).replace("-",".")}</span><span class="li-type ${x.type}">${tn}</span><span class="li-amt">−${amt}</span><button class="li-del" data-id="${x.id}" title="삭제">✕</button></div>`;
+    const tn=typeName(x.type);
+    const amt=amtText(x);
+    return `<div class="log-item"><span class="li-date">${x.date.slice(5).replace("-",".")}</span><span class="li-type ${x.type}">${tn}</span><span class="li-amt">−${amt}</span><button class="li-del" data-id="${x.id}" data-i18n-title="delTitle" title="${tr("delTitle")}">✕</button></div>`;
   }).join("");
-  $$("#log-list .li-del").forEach(b=>b.onclick=()=>{ log=log.filter(x=>x.id!==b.dataset.id); saveLog(); renderAll(); toast("기록을 삭제했어요"); });
+  $$("#log-list .li-del").forEach(b=>b.onclick=()=>{ log=log.filter(x=>x.id!==b.dataset.id); saveLog(); renderAll(); toast(tr("toastDeleted")); });
 }
 
 function renderAll(){ renderStats(); renderEarly(); renderSick(); renderCover(); renderSvc(); renderFilter(); renderCalendar(); renderLog(); }
@@ -617,8 +782,8 @@ $("#s-sun").onclick=()=>$("#s-sun").classList.toggle("on");
 $("#s-inclend").onclick=()=>$("#s-inclend").classList.toggle("on");
 $("#s-save").onclick=()=>{
   const start=$("#s-start").value, end=$("#s-end").value, departure=$("#s-departure").value;
-  if(!start||!end||parse(end)<=parse(start)){ toast("소집해제일이 시작일보다 뒤여야 해요"); return; }
-  if(!departure||parse(departure)>parse(end)||parse(departure)<parse(start)){ toast("출국일은 시작~해제일 사이여야 해요"); return; }
+  if(!start||!end||parse(end)<=parse(start)){ toast(tr("toastEndAfterStart")); return; }
+  if(!departure||parse(departure)>parse(end)||parse(departure)<parse(start)){ toast(tr("toastDepBetween")); return; }
   cfg={ start, end, departure,
     hpd:Math.max(1,+$("#s-hpd").value||8),
     sick:Math.max(0,+$("#s-sick").value||0),
@@ -626,46 +791,46 @@ $("#s-save").onclick=()=>{
     special:Math.max(0,+$("#s-special").value||0),
     sat:$("#s-sat").classList.contains("on"), sun:$("#s-sun").classList.contains("on"),
     inclEnd:$("#s-inclend").classList.contains("on") };
-  saveCfg(); closeSheet("set"); renderAll(); toast("저장했어요 ✓");
+  saveCfg(); closeSheet("set"); renderAll(); toast(tr("toastSaved"));
 };
-$("#s-reset").onclick=()=>{ if(confirm("설정을 기본값으로 되돌릴까요? (사용 기록은 유지)")){ cfg={...DEF}; saveCfg(); fillSettings(); renderAll(); toast("기본값으로 초기화했어요"); } };
+$("#s-reset").onclick=()=>{ if(confirm(tr("confirmReset"))){ cfg={...DEF}; saveCfg(); fillSettings(); renderAll(); toast(tr("toastReset")); } };
 
 /* ════════ 사용 기록 ════════ */
 let logDate=null, logType="sick";
 function setLogType(t){
   logType=t;
   $$("#l-type button").forEach(b=>b.classList.toggle("on",b.dataset.t===t));
-  $("#l-amt-label").textContent = t==="sick" ? "사용 시간(시간)" : "사용 일수(일)";
+  $("#l-amt-label").textContent = t==="sick" ? tr("amtLabelHours") : tr("amtLabelDays");
   $("#l-hours").value = t==="sick" ? "" : "1";
 }
 $$("#l-type button").forEach(b=>b.onclick=()=>setLogType(b.dataset.t));
 function renderDayLogs(){
   const items=log.filter(x=>x.date===logDate);
-  $("#day-logs").innerHTML = items.length ? `<div style="font-size:11.5px;font-weight:800;color:var(--sub);margin:2px 2px 8px">이 날 기록</div>`+
-    items.map(x=>{ const tn=x.type==="sick"?"병가":x.type==="annual"?"연가":"특별휴가"; const amt=x.type==="sick"?`${x.hours}시간`:`${Math.round(x.hours/cfg.hpd*100)/100}일`;
+  $("#day-logs").innerHTML = items.length ? `<div style="font-size:11.5px;font-weight:800;color:var(--sub);margin:2px 2px 8px">${tr("dayLogsHead")}</div>`+
+    items.map(x=>{ const tn=typeName(x.type); const amt=amtText(x);
       return `<div class="dl-item"><span class="li-type ${x.type}">${tn}</span><span>−${amt}</span><button class="dl-del" data-id="${x.id}">✕</button></div>`; }).join("") : "";
-  $$("#day-logs .dl-del").forEach(b=>b.onclick=()=>{ log=log.filter(x=>x.id!==b.dataset.id); saveLog(); renderDayLogs(); renderAll(); toast("삭제했어요"); });
+  $$("#day-logs .dl-del").forEach(b=>b.onclick=()=>{ log=log.filter(x=>x.id!==b.dataset.id); saveLog(); renderDayLogs(); renderAll(); toast(tr("toastDeleted2")); });
 }
 function openLog(date){
   logDate=date||iso(today0()); $("#l-date").value=logDate;
-  $("#log-title").textContent = date? `${date.slice(5).replace("-",".")} 사용 기록` : "사용 기록 추가";
+  $("#log-title").textContent = date? (L==="ko"?`${date.slice(5).replace("-",".")} 사용 기록`:`${date.slice(5).replace("-",".")} log`) : tr("logTitleAdd");
   setLogType("sick"); renderDayLogs(); openSheet("log");
 }
 $("#btn-addlog").onclick=()=>openLog(null);
 $("#l-date").onchange=()=>{ logDate=$("#l-date").value; renderDayLogs(); };
 $("#l-save").onclick=()=>{
   const date=$("#l-date").value; let v=+$("#l-hours").value;
-  if(!date){ toast("날짜를 선택하세요"); return; }
-  if(!(v>0)){ toast("사용량을 입력하세요"); return; }
+  if(!date){ toast(tr("toastPickDate")); return; }
+  if(!(v>0)){ toast(tr("toastEnterAmt")); return; }
   const hours = logType==="sick" ? v : v*cfg.hpd;
   log.push({ id:"l"+Date.now().toString(36)+Math.random().toString(36).slice(2,5), date, type:logType, hours });
   saveLog(); logDate=date; renderDayLogs(); renderAll();
   $("#l-hours").value = logType==="sick"?"":"1";
-  toast(`기록 추가 ✓ · 병가 잔여 ${fmtH(sickRemain())}`);
+  toast(`${tr("toastLogAdded")} · ${tr("balSick")} ${fmtH(sickRemain())}`);
 };
 
 /* ════════ 시작 ════════ */
-(function init(){ const t=today0(); viewY=t.getFullYear(); viewM=t.getMonth(); renderAll(); })();
+(function init(){ const t=today0(); viewY=t.getFullYear(); viewM=t.getMonth(); renderAll(); applyLang(L); })();
 </script>
 </body>
 </html>
