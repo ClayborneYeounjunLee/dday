@@ -516,7 +516,15 @@ const DEF={ start:"2025-01-16", end:"2026-10-15", departure:"2026-09-22", hpd:8,
 function loadCfg(){ try{ return {...DEF, ...(JSON.parse(localStorage.getItem(LS_CFG))||{})}; }catch(e){ return {...DEF}; } }
 function saveCfg(){ try{ localStorage.setItem(LS_CFG, JSON.stringify(cfg)); }catch(e){} }
 let cfg=loadCfg();
-function loadLog(){ try{ return JSON.parse(localStorage.getItem(LS_LOG))||[]; }catch(e){ return []; } }
+/* 코드에 박아두는 기본 사용 기록(시드). 로드 시 localStorage 기록과 병합(중복 id는 제외) → 모든 기기에서 표시됨 */
+const SEED_LOG=[
+  { id:"seed-20260604-sick1h", date:"2026-06-04", type:"sick", hours:1 },
+];
+function loadLog(){
+  let arr; try{ arr=JSON.parse(localStorage.getItem(LS_LOG))||[]; }catch(e){ arr=[]; }
+  for(const s of SEED_LOG){ if(!arr.some(x=>x.id===s.id)) arr.push(s); }
+  return arr;
+}
 function saveLog(){ try{ localStorage.setItem(LS_LOG, JSON.stringify(log)); }catch(e){} }
 let log=loadLog();
 
